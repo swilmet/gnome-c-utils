@@ -1,1 +1,32 @@
 Utilities when programming for GNOME, for the C language.
+
+lineup-parameters
+=================
+
+Line up parameters of function declarations.
+
+Example:
+
+gboolean
+frobnitz (Frobnitz *frobnitz,
+          gint magic_number,
+          GError **error)
+{
+  ...
+}
+
+Becomes:
+
+gboolean
+frobnitz (Frobnitz  *frobnitz,
+          gint       magic_number,
+          GError   **error)
+{
+  ...
+}
+
+Read the top of lineup-parameters.c for more details.
+
+To compile:
+$ cd lineup-parameters/
+$ make
