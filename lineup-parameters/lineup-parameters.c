@@ -76,11 +76,6 @@
  * autocmd Filetype c call LineupParameters()
  */
 
-/* TODO improve the code by not duplicating the regexes (some are almost
- * identical). For example, merge match_parameter(), match_last_parameter() and
- * get_parameter_info(). The code has been written a bit too quickly.
- */
-
 #include <gio/gio.h>
 #include <gio/gunixinputstream.h>
 #include <stdlib.h>
@@ -95,43 +90,97 @@ typedef struct
   gchar *name;
 } ParameterInfo;
 
-static gboolean
-match_function_name (const gchar *line)
+static void
+parameter_info_free (ParameterInfo *param_info)
 {
-  static GRegex *regex = NULL;
-
-  if (G_UNLIKELY (regex == NULL))
-    regex = g_regex_new ("^[a-z_]+ \\(", G_REGEX_OPTIMIZE, 0, NULL);
-
-  return g_regex_match (regex, line, 0, NULL);
+  g_free (param_info->type);
+  g_free (param_info->name);
+  g_slice_free (ParameterInfo, param_info);
 }
 
 static gboolean
-match_parameter (const gchar *line)
+match_function_name (const gchar  *line,
+                     gchar       **function_name,
+                     gint         *first_param_pos)
 {
   static GRegex *regex = NULL;
+  GMatchInfo *match_info;
+  gint end_pos;
+  gboolean match = FALSE;
 
   if (G_UNLIKELY (regex == NULL))
-    regex = g_regex_new ("(const\\s+)?\\w+\\s*\\**\\s*\\w+\\s*,\\s*$",
+    regex = g_regex_new ("^(\\w+) ?\\(", G_REGEX_OPTIMIZE, 0, NULL);
+
+  g_regex_match (regex, line, 0, &match_info);
+
+  if (g_match_info_matches (match_info) &&
+      g_match_info_fetch_pos (match_info, 1, NULL, &end_pos) &&
+      g_match_info_fetch_pos (match_info, 0, NULL, first_param_pos))
+    {
+      match = TRUE;
+
+      if (function_name != NULL)
+        *function_name = g_strndup (line, end_pos);
+    }
+
+  g_match_info_free (match_info);
+  return match;
+}
+
+static gboolean
+match_parameter (gchar          *line,
+                 ParameterInfo **info,
+                 gboolean       *is_last_parameter)
+{
+  static GRegex *regex = NULL;
+  GMatchInfo *match_info;
+  gboolean first_param;
+  gint start_pos = 0;
+
+  if (G_UNLIKELY (regex == NULL))
+    regex = g_regex_new ("^\\s*(?<type>(const\\s+)?\\w+)\\s*(?<stars>\\**)\\s*(?<name>\\w+)\\s*(?<end>,|\\))\\s*$",
                          G_REGEX_OPTIMIZE,
                          0,
                          NULL);
 
-  return g_regex_match (regex, line, 0, NULL);
-}
+  if (is_last_parameter != NULL)
+    *is_last_parameter = FALSE;
 
-static gboolean
-match_last_parameter (const gchar *line)
-{
-  static GRegex *regex = NULL;
+  match_function_name (line, NULL, &start_pos);
 
-  if (G_UNLIKELY (regex == NULL))
-    regex = g_regex_new ("(const\\s+)?\\w+\\s*\\**\\s*\\w+\\s*\\)\\s*$",
-                         G_REGEX_OPTIMIZE,
-                         0,
-                         NULL);
+  g_regex_match (regex, line + start_pos, 0, &match_info);
 
-  return g_regex_match (regex, line, 0, NULL);
+  if (!g_match_info_matches (match_info))
+    {
+      g_match_info_free (match_info);
+      return FALSE;
+    }
+
+  if (info != NULL)
+    {
+      gchar *stars;
+
+      *info = g_slice_new0 (ParameterInfo);
+
+      (*info)->type = g_match_info_fetch_named (match_info, "type");
+      (*info)->name = g_match_info_fetch_named (match_info, "name");
+      g_assert ((*info)->type != NULL);
+      g_assert ((*info)->name != NULL);
+
+      stars = g_match_info_fetch_named (match_info, "stars");
+      (*info)->nb_stars = strlen (stars);
+      g_free (stars);
+    }
+
+  if (is_last_parameter != NULL)
+    {
+      gchar *end = g_match_info_fetch_named (match_info, "end");
+      *is_last_parameter = g_str_equal (end, ")");
+      g_free (end);
+    }
+
+  g_match_info_free (match_info);
+  return TRUE;
 }
 
 static gboolean
@@ -140,7 +189,7 @@ match_opening_curly_brace (const gchar *line)
   static GRegex *regex = NULL;
 
   if (G_UNLIKELY (regex == NULL))
-    regex = g_regex_new ("^{[ \t]*$", G_REGEX_OPTIMIZE, 0, NULL);
+    regex = g_regex_new ("^{\\s*$", G_REGEX_OPTIMIZE, 0, NULL);
 
   return g_regex_match (regex, line, 0, NULL);
 }
@@ -155,7 +204,12 @@ get_function_declaration_length (gchar **lines)
 
   while (*cur_line != NULL)
     {
-      if (match_last_parameter (*cur_line))
+      gboolean match_param;
+      gboolean is_last_param;
+
+      match_param = match_parameter (*cur_line, NULL, &is_last_param);
+
+      if (is_last_param)
         {
           gchar *next_line = *(cur_line + 1);
 
@@ -166,95 +220,12 @@ get_function_declaration_length (gchar **lines)
           return nb_lines;
         }
 
-      if (!match_parameter (*cur_line))
+      if (!match_param)
         return 0;
 
       nb_lines++;
       cur_line++;
     }
-}
-
-static gchar *
-get_function_name (gchar *line)
-{
-  static GRegex *regex = NULL;
-  GMatchInfo *match_info;
-  gint end_pos;
-
-  if (G_UNLIKELY (regex == NULL))
-    regex = g_regex_new ("^([a-z_]+) \\(", G_REGEX_OPTIMIZE, 0, NULL);
-
-  g_regex_match (regex, line, 0, &match_info);
-
-  if (!g_match_info_fetch_pos (match_info, 1, NULL, &end_pos))
-    g_error ("Impossible to fetch the function name.");
-
-  g_match_info_free (match_info);
-
-  return g_strndup (line, end_pos);
-}
-
-static gint
-get_first_parameter_position (gchar *line)
-{
-  static GRegex *regex = NULL;
-  GMatchInfo *match_info;
-  gint end_pos;
-
-  if (G_UNLIKELY (regex == NULL))
-    regex = g_regex_new ("^([a-z_]+) \\(", G_REGEX_OPTIMIZE, 0, NULL);
-
-  g_regex_match (regex, line, 0, &match_info);
-
-  if (!g_match_info_fetch_pos (match_info, 0, NULL, &end_pos))
-    g_error ("Impossible to get the first parameter position.");
-
-  g_match_info_free (match_info);
-
-  return end_pos;
-}
-
-static void
-parameter_info_free (ParameterInfo *param_info)
-{
-  g_free (param_info->type);
-  g_free (param_info->name);
-  g_slice_free (ParameterInfo, param_info);
-}
-
-static ParameterInfo *
-get_parameter_info (gchar    *line,
-                    gboolean  first_param)
-{
-  static GRegex *regex = NULL;
-  ParameterInfo *info = g_slice_new0 (ParameterInfo);
-  GMatchInfo *match_info;
-  gchar *stars;
-  gint start_pos = 0;
-
-  if (G_UNLIKELY (regex == NULL))
-    regex = g_regex_new ("(?<type>(const\\s+)?\\w+)\\s*(?<stars>\\**)\\s*(?<name>\\w+)",
-                         G_REGEX_OPTIMIZE,
-                         0,
-                         NULL);
-
-  if (first_param)
-    start_pos = get_first_parameter_position (line);
-
-  g_regex_match (regex, line + start_pos, 0, &match_info);
-
-  info->type = g_match_info_fetch_named (match_info, "type");
-  info->name = g_match_info_fetch_named (match_info, "name");
-  g_assert (info->type != NULL);
-  g_assert (info->name != NULL);
-
-  stars = g_match_info_fetch_named (match_info, "stars");
-  info->nb_stars = strlen (stars);
-
-  g_match_info_free (match_info);
-  g_free (stars);
-
-  return info;
 }
 
 static GSList *
@@ -266,7 +237,11 @@ get_list_parameter_infos (gchar **lines,
 
   for (i = length - 1; i >= 0; i--)
     {
-      ParameterInfo *info = get_parameter_info (lines[i], i == 0);
+      ParameterInfo *info = NULL;
+
+      match_parameter (lines[i], &info, NULL);
+      g_assert (info != NULL);
+
       list = g_slist_prepend (list, info);
     }
 
@@ -339,7 +314,9 @@ print_function_declaration (gchar **lines,
   guint max_stars_length;
   gchar *spaces;
 
-  function_name = get_function_name (*cur_line);
+  if (!match_function_name (*cur_line, &function_name, NULL))
+    g_error ("The line doesn't match a function name.");
+
   g_print ("%s (", function_name);
 
   nb_spaces_to_parenthesis = strlen (function_name) + 2;
@@ -378,7 +355,7 @@ parse_contents (gchar **lines)
     {
       guint length;
 
-      if (!match_function_name (*cur_line))
+      if (!match_function_name (*cur_line, NULL, NULL))
         {
           g_print ("%s\n", *cur_line);
           continue;
