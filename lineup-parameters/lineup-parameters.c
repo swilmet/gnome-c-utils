@@ -290,13 +290,15 @@ print_parameter (ParameterInfo *info,
   g_print ("%s ", spaces);
   g_free (spaces);
 
-  stars = g_strnfill (info->nb_stars, '*');
-  g_print ("%s", stars);
-
   nb_spaces = max_stars_length - info->nb_stars;
+  g_assert (nb_spaces >= 0);
   spaces = g_strnfill (nb_spaces, ' ');
   g_print ("%s", spaces);
   g_free (spaces);
+
+  stars = g_strnfill (info->nb_stars, '*');
+  g_print ("%s", stars);
+  g_free (stars);
 
   g_print ("%s", info->name);
 }
