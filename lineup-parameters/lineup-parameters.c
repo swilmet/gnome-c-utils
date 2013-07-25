@@ -421,7 +421,7 @@ get_stdin_contents (void)
 
   while (TRUE)
     {
-      gchar buffer[4096];
+      gchar buffer[4097] = { '\0' };
       gssize nb_bytes_read = g_input_stream_read (stream, buffer, 4096, NULL, &error);
 
       if (nb_bytes_read == 0)
