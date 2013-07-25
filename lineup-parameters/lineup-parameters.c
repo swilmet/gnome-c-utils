@@ -58,13 +58,22 @@
 /*
  * Use with Vim:
  *
- * You can use a selection: place the cursor at the function's name, press
- * Ctrl+V to start the line selection, go to the "{", type ":" followed by
- * "!lineup-parameters". Note, the "{" is required in the selection, to detect
- * that we are in a function declaration.
+ * You can use a selection:
+ * - place the cursor at the function's name;
+ * - press V to start the line selection;
+ * - press ]] to go to the "{";
+ * - type ":" followed by "!lineup-parameters".
  *
- * TODO: when inside the function parameters, be able to press a key to line up
- * the parameters, without selection (use e.g. { and ]] navigation keys).
+ * Note: the "{" is required in the selection, to detect that we are in a
+ * function declaration.
+ *
+ * You can easily map these steps with a keybinding (F8 in the example below):
+ *
+ * function! LineupParameters()
+ *         map <F8> {V]]:!lineup-parameters<CR>]]
+ * endfunction
+ *
+ * autocmd Filetype c call LineupParameters()
  */
 
 /* TODO improve the code by not duplicating the regexes (some are almost
