@@ -64,7 +64,12 @@
  * that we are in a function declaration.
  *
  * TODO: when inside the function parameters, be able to press a key to line up
- * the parameters, without selection.
+ * the parameters, without selection (use e.g. { and ]] navigation keys).
+ */
+
+/* TODO improve the code by not duplicating the regexes (some are almost
+ * identical). For example, merge match_parameter(), match_last_parameter() and
+ * get_parameter_info(). The code has been written a bit too quickly.
  */
 
 #include <gio/gio.h>
@@ -98,7 +103,7 @@ match_parameter (const gchar *line)
   static GRegex *regex = NULL;
 
   if (G_UNLIKELY (regex == NULL))
-    regex = g_regex_new ("[a-zA-Z_]+[ \t]*\\**[ \t]*[a-zA-Z_]+[ \t]*,[ \t]*$",
+    regex = g_regex_new ("(const\\s+)?\\w+\\s*\\**\\s*\\w+\\s*,\\s*$",
                          G_REGEX_OPTIMIZE,
                          0,
                          NULL);
@@ -112,7 +117,7 @@ match_last_parameter (const gchar *line)
   static GRegex *regex = NULL;
 
   if (G_UNLIKELY (regex == NULL))
-    regex = g_regex_new ("[a-zA-Z_]+[ \t]*\\**[ \t]*[a-zA-Z_]+[ \t]*\\)[ \t]*$",
+    regex = g_regex_new ("(const\\s+)?\\w+\\s*\\**\\s*\\w+\\s*\\)\\s*$",
                          G_REGEX_OPTIMIZE,
                          0,
                          NULL);
@@ -219,7 +224,7 @@ get_parameter_info (gchar    *line,
   gint start_pos = 0;
 
   if (G_UNLIKELY (regex == NULL))
-    regex = g_regex_new ("(?<type>[a-zA-Z_]+)[ \t]*(?<stars>\\**)[ \t]*(?<name>[a-zA-Z_]+)",
+    regex = g_regex_new ("(?<type>(const\\s+)?\\w+)\\s*(?<stars>\\**)\\s*(?<name>\\w+)",
                          G_REGEX_OPTIMIZE,
                          0,
                          NULL);
