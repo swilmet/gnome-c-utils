@@ -58,6 +58,10 @@
 /*
  * Use with Vim:
  *
+ * Although this script can be used in Vim (or other text editors), a Vim plugin
+ * exists:
+ * http://damien.lespiau.name/blog/2009/12/07/aligning-c-function-parameters-with-vim/
+ *
  * You can use a selection:
  * - place the cursor at the function's name;
  * - press V to start the line selection;
