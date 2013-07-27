@@ -87,6 +87,8 @@
 #include <locale.h>
 #include <unistd.h>
 
+#define USE_TABS FALSE
+
 typedef struct
 {
   gchar *type;
@@ -326,7 +328,21 @@ print_function_declaration (gchar **lines,
   g_print ("%s (", function_name);
 
   nb_spaces_to_parenthesis = strlen (function_name) + 2;
-  spaces = g_strnfill (nb_spaces_to_parenthesis, ' ');
+
+  if (USE_TABS)
+    {
+      gchar *tabs = g_strnfill (nb_spaces_to_parenthesis / 8, '\t');
+      gchar *spaces_after_tabs = g_strnfill (nb_spaces_to_parenthesis % 8, ' ');
+
+      spaces = g_strdup_printf ("%s%s", tabs, spaces_after_tabs);
+
+      g_free (tabs);
+      g_free (spaces_after_tabs);
+    }
+  else
+    {
+      spaces = g_strnfill (nb_spaces_to_parenthesis, ' ');
+    }
 
   parameter_infos = get_list_parameter_infos (lines, length);
   compute_spacing (parameter_infos, &max_type_length, &max_stars_length);
