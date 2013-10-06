@@ -144,7 +144,7 @@ match_parameter (gchar          *line,
   gint start_pos = 0;
 
   if (G_UNLIKELY (regex == NULL))
-    regex = g_regex_new ("^\\s*(?<type>(const\\s+)?\\w+)\\s*(?<stars>\\**)\\s*(?<name>\\w+)\\s*(?<end>,|\\))\\s*$",
+    regex = g_regex_new ("^\\s*(?<type>(const\\s+)?\\w+)\\s+(?<stars>\\**)\\s*(?<name>\\w+)\\s*(?<end>,|\\))\\s*$",
                          G_REGEX_OPTIMIZE,
                          0,
                          NULL);
