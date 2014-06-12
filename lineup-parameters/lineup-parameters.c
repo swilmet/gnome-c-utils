@@ -84,6 +84,8 @@
  * autocmd Filetype c map <F8> :call LineupParameters()<CR>
  */
 
+/* TODO support "..." vararg parameter. */
+
 #include <gio/gio.h>
 #include <gio/gunixinputstream.h>
 #include <stdlib.h>
