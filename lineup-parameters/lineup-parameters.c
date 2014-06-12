@@ -71,13 +71,17 @@
  * Note: the "{" is required in the selection, to detect that we are in a
  * function declaration.
  *
- * You can easily map these steps with a keybinding (F8 in the example below):
+ * You can easily map these steps with a keybinding (F8 in the example below).
+ * Note that I'm not a Vim expert, so there is maybe a better way to configure
+ * this stuff.
  *
  * function! LineupParameters()
- *         map <F8> {V]]:!lineup-parameters<CR>]]
+ *         let l:winview = winsaveview()
+ *         execute "normal {V]]:!lineup-parameters\<CR>"
+ *         call winrestview(l:winview)
  * endfunction
  *
- * autocmd Filetype c call LineupParameters()
+ * autocmd Filetype c map <F8> :call LineupParameters()<CR>
  */
 
 #include <gio/gio.h>
