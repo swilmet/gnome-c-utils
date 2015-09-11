@@ -30,3 +30,32 @@ Read the top of lineup-parameters.c for more details.
 To compile:
 $ cd lineup-parameters/
 $ make
+
+
+lineup-substitution
+===================
+
+Do a substitution and at the same time keep a good alignment of parameters on
+the parenthesis.
+
+Example:
+
+function_call (param1,
+               param2,
+               param3);
+
+Rename function_call to another_beautiful_name:
+
+another_beautiful_name (param1,
+                        param2,
+                        param3);
+
+lineup-substitution can be useful to rename a GObject class, or change the
+namespace of a group of GObjects, while still keeping a good
+indentation/alignment of the code (in combination with lineup-parameters).
+
+Read the top of lineup-substitution.c for more details.
+
+To compile:
+$ cd lineup-substitution/
+$ make
