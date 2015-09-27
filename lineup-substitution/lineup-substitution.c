@@ -63,6 +63,11 @@
  * https://mail.gnome.org/archives/desktop-devel-list/2015-September/msg00020.html
  */
 
+/* TODO check all opening parenthesis, not only the first one.
+ * Aligning on the second opening parenthesis is done for example in a GObject
+ * vfunc chain-up.
+ */
+
 /* Note: yes, this script uses GTK+ and GtkSourceView, because
  * GtkSourceBuffer/GtkTextBuffer are good at navigating through text and editing
  * it. Another reason is because I'm familiar with those APIs, so it was easier
