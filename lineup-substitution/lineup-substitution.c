@@ -322,29 +322,27 @@ replace (Sub                    *sub,
          const GtkTextIter      *match_start,
          GtkTextIter            *match_end)
 {
-  GError *error = NULL;
-  GtkTextMark *mark;
   gint parenthesis_column;
+  GtkTextIter start;
+  GtkTextMark *mark;
+  GError *error = NULL;
+
+  parenthesis_column = get_parenthesis_column (sub, match_end);
+
+  start = *match_start;
+  gtk_source_search_context_replace2 (search_context,
+                                      &start,
+                                      match_end,
+                                      sub->replacement, -1,
+                                      &error);
+
+  if (error != NULL)
+    g_error ("Error when doing the substitution: %s", error->message);
 
   mark = gtk_text_buffer_create_mark (GTK_TEXT_BUFFER (sub->buffer),
                                       NULL,
                                       match_end,
                                       FALSE);
-
-  parenthesis_column = get_parenthesis_column (sub, match_end);
-
-  gtk_source_search_context_replace (search_context,
-                                     match_start,
-                                     match_end,
-                                     sub->replacement, -1,
-                                     &error);
-
-  if (error != NULL)
-    g_error ("Error when doing the substitution: %s", error->message);
-
-  gtk_text_buffer_get_iter_at_mark (GTK_TEXT_BUFFER (sub->buffer),
-                                    match_end,
-                                    mark);
 
   if (parenthesis_column != -1)
     {
