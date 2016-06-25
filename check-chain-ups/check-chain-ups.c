@@ -83,7 +83,8 @@ get_function_name (const GtkTextIter *_iter)
 
 static void
 check_chain_up (GtkSourceBuffer   *buffer,
-		const GtkTextIter *vfunc_start)
+                const GtkTextIter *vfunc_start,
+                const gchar       *basename)
 {
   gchar *function_name;
   GtkTextIter vfunc_end;
@@ -114,11 +115,16 @@ check_chain_up (GtkSourceBuffer   *buffer,
 
   if (g_str_has_suffix (function_name, vfunc))
     {
-      g_print ("%s(): OK\n", function_name);
+      g_print ("%s: %s(): OK\n",
+               basename,
+               function_name);
     }
   else
     {
-      g_printerr ("%s() chains up '%s'. Is that correct?\n", function_name, vfunc);
+      g_printerr ("%s: %s() chains up '%s'. Is that correct?\n",
+                  basename,
+                  function_name,
+                  vfunc);
     }
 
   g_free (function_name);
@@ -126,7 +132,8 @@ check_chain_up (GtkSourceBuffer   *buffer,
 }
 
 static void
-check_buffer (GtkSourceBuffer *buffer)
+check_buffer (GtkSourceBuffer *buffer,
+              const gchar     *basename)
 {
   GtkSourceSearchSettings *search_settings;
   GtkSourceSearchContext *search_context;
@@ -149,7 +156,7 @@ check_buffer (GtkSourceBuffer *buffer)
                                              &match_end,
                                              NULL))
     {
-      check_chain_up (buffer, &match_end);
+      check_chain_up (buffer, &match_end, basename);
       iter = match_end;
     }
 
@@ -176,18 +183,18 @@ main (gint   argc,
       const gchar *path;
       GFile *file;
       GtkSourceBuffer *buffer;
+      gchar *basename;
 
       path = argv[arg_num];
-      g_print ("File: %s\n", path);
-
       file = g_file_new_for_path (path);
-      buffer = open_file (file);
-      check_buffer (buffer);
+      basename = g_file_get_basename (file);
 
-      g_print ("\n");
+      buffer = open_file (file);
+      check_buffer (buffer, basename);
 
       g_object_unref (file);
       g_object_unref (buffer);
+      g_free (basename);
     }
 
   return EXIT_SUCCESS;
