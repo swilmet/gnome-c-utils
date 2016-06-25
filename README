@@ -59,3 +59,14 @@ Read the top of lineup-substitution.c for more details.
 To compile:
 $ cd lineup-substitution/
 $ make
+
+check-chain-ups
+===============
+
+Basic check of GObject virtual function chain-ups.
+
+Read the top of check-chain-ups.c for more details.
+
+To compile:
+$ cd check-chain-ups/
+$ make

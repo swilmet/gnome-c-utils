@@ -17,6 +17,48 @@
  * along with gnome-c-utils.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * Basic check of GObject virtual function chain-ups.
+ *
+ * Usage: check-chain-ups <file1.c> [file2.c] ...
+ *
+ * For a less verbose output, redirect stdout to /dev/null. The warnings/errors
+ * are printed on stderr.
+ *
+ * The script searches where a vfunc is chained up, by looking at the following
+ * pattern, allowing spaces around the parenthesis and after '->':
+ *
+ *     _parent_class)->vfunc_name
+ *
+ * It extracts "vfunc_name". Then the script searches the function name
+ * containing the chain-up, and checks that the function name has "vfunc_name"
+ * for suffix.
+ *
+ * For example in this code:
+ *
+ * static void
+ * my_class_finalize (GObject *object)
+ * {
+ *   ...
+ *
+ *   G_OBJECT_CLASS (gtk_source_file_loader_parent_class)->dispose (object);
+ * }
+ *
+ * "my_class_finalize" doesn't have the "dispose" suffix, so it'll print a
+ * message on stderr.
+ */
+
+/* TODO A possible improvement is to search the function name
+ * ("my_class_finalize" in the above example) that is present in the pattern:
+ *
+ * ->foo = function_name;
+ *
+ * And check that "foo" is the same as vfunc_name, the chained-up vfunc.
+ *
+ * Of course using a real static analysis tool for the C language would be
+ * better.
+ */
+
 /* Note: yes, this script uses GTK+ and GtkSourceView, because
  * GtkSourceBuffer/GtkTextBuffer are good at navigating through text and editing
  * it. Another reason is because I'm familiar with those APIs, so it was easier
@@ -174,7 +216,7 @@ main (gint   argc,
 
   if (argc < 2)
     {
-      g_printerr ("Usage: %s <file1> [file2] ...\n", argv[0]);
+      g_printerr ("Usage: %s <file1.c> [file2.c] ...\n", argv[0]);
       return EXIT_FAILURE;
     }
 
