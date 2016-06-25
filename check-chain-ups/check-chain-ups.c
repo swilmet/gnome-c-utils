@@ -66,7 +66,7 @@ get_function_name (const GtkTextIter *_iter)
               gunichar end_c;
 
               end_c = gtk_text_iter_get_char (&function_name_end);
-              if (!g_unichar_isalpha (end_c) && end_c != '_')
+              if (!g_unichar_isalnum (end_c) && end_c != '_')
                 break;
             }
 
