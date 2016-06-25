@@ -386,10 +386,11 @@ do_substitution (Sub *sub)
 
   gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (sub->buffer), &iter);
 
-  while (gtk_source_search_context_forward (search_context,
-                                            &iter,
-                                            &match_start,
-                                            &match_end))
+  while (gtk_source_search_context_forward2 (search_context,
+                                             &iter,
+                                             &match_start,
+                                             &match_end,
+                                             NULL))
     {
       replace (sub, search_context, &match_start, &match_end);
       iter = match_end;
