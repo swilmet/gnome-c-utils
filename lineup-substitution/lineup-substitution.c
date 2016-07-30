@@ -165,6 +165,20 @@ save_file (Sub *sub)
                                     sub);
 }
 
+static void
+check_parenthesis_columns (GSList *list)
+{
+  GSList *l;
+  gint prev_value = G_MAXINT;
+
+  for (l = list; l != NULL; l = l->next)
+    {
+      gint cur_value = GPOINTER_TO_INT (l->data);
+      g_assert_cmpint (prev_value, >, cur_value);
+      prev_value = cur_value;
+    }
+}
+
 /* Returns the column numbers in reverse order. */
 static GSList *
 get_parenthesis_columns (Sub               *sub,
@@ -195,6 +209,7 @@ get_parenthesis_columns (Sub               *sub,
       iter = match_end;
     }
 
+  check_parenthesis_columns (list);
   return list;
 }
 
@@ -354,7 +369,15 @@ adjust_alignment_after_line (Sub         *sub,
 
           if (text_start_column == cur_parenthesis_column)
             {
+              GSList *intra_parenthesis_columns;
+
+              intra_parenthesis_columns = get_parenthesis_columns (sub, &next_line);
+
               adjust_alignment_at_line (sub, &next_line);
+
+              parenthesis_columns = g_slist_concat (intra_parenthesis_columns, parenthesis_columns);
+              check_parenthesis_columns (parenthesis_columns);
+
               break;
             }
 
