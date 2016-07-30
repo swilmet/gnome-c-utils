@@ -322,39 +322,26 @@ adjust_alignment_at_line (Sub         *sub,
   gtk_text_iter_set_line_offset (line_start, 0);
 }
 
+/* Takes ownership of @parenthesis_columns.
+ * @pos is re-validated.
+ */
 static void
-replace (Sub                    *sub,
-         GtkSourceSearchContext *search_context,
-         const GtkTextIter      *match_start,
-         GtkTextIter            *match_end)
+adjust_alignment_after_line (Sub         *sub,
+                             GSList      *parenthesis_columns,
+                             GtkTextIter *pos)
 {
-  GSList *parenthesis_columns;
-  GtkTextIter start;
-  GtkTextIter next_line;
   GtkTextMark *mark;
-  GError *error = NULL;
-
-  parenthesis_columns = get_parenthesis_columns (sub, match_end);
-
-  start = *match_start;
-  gtk_source_search_context_replace2 (search_context,
-                                      &start,
-                                      match_end,
-                                      sub->replacement, -1,
-                                      &error);
-
-  if (error != NULL)
-    g_error ("Error when doing the substitution: %s", error->message);
+  GtkTextIter next_line;
 
   if (parenthesis_columns == NULL)
     return;
 
   mark = gtk_text_buffer_create_mark (GTK_TEXT_BUFFER (sub->buffer),
                                       NULL,
-                                      match_end,
+                                      pos,
                                       FALSE);
 
-  next_line = *match_end;
+  next_line = *pos;
   while (gtk_text_iter_forward_line (&next_line))
     {
       gint text_start_column;
@@ -380,12 +367,37 @@ replace (Sub                    *sub,
     }
 
   gtk_text_buffer_get_iter_at_mark (GTK_TEXT_BUFFER (sub->buffer),
-                                    match_end,
+                                    pos,
                                     mark);
 
   gtk_text_buffer_delete_mark (GTK_TEXT_BUFFER (sub->buffer), mark);
 
   g_slist_free (parenthesis_columns);
+}
+
+static void
+replace (Sub                    *sub,
+         GtkSourceSearchContext *search_context,
+         const GtkTextIter      *match_start,
+         GtkTextIter            *match_end)
+{
+  GSList *parenthesis_columns;
+  GtkTextIter start;
+  GError *error = NULL;
+
+  parenthesis_columns = get_parenthesis_columns (sub, match_end);
+
+  start = *match_start;
+  gtk_source_search_context_replace2 (search_context,
+                                      &start,
+                                      match_end,
+                                      sub->replacement, -1,
+                                      &error);
+
+  if (error != NULL)
+    g_error ("Error when doing the substitution: %s", error->message);
+
+  adjust_alignment_after_line (sub, parenthesis_columns, match_end);
 }
 
 static void
