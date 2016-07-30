@@ -261,30 +261,30 @@ indentation_contains_tab (const GtkTextIter *line_iter)
 }
 
 static void
-adjust_alignment (Sub         *sub,
-                  GtkTextIter *iter)
+adjust_alignment_at_line (Sub         *sub,
+                          GtkTextIter *line_start)
 {
-  GtkTextIter start_text_iter;
+  GtkTextIter text_start;
   gint new_length;
   gboolean tabs;
 
-  g_assert (gtk_text_iter_starts_line (iter));
+  g_assert (gtk_text_iter_starts_line (line_start));
 
-  start_text_iter = *iter;
-  forward_iter_to_text_start (&start_text_iter);
-  g_assert (!gtk_text_iter_is_end (&start_text_iter));
-  g_assert (!gtk_text_iter_ends_line (&start_text_iter));
+  text_start = *line_start;
+  forward_iter_to_text_start (&text_start);
+  g_assert (!gtk_text_iter_is_end (&text_start));
+  g_assert (!gtk_text_iter_ends_line (&text_start));
 
-  new_length = (get_text_start_column (sub, iter) -
+  new_length = (get_text_start_column (sub, line_start) -
                 g_utf8_strlen (sub->search_text, -1) +
                 g_utf8_strlen (sub->replacement, -1));
   g_assert_cmpint (new_length, >=, 0);
 
-  tabs = indentation_contains_tab (iter);
+  tabs = indentation_contains_tab (line_start);
 
   gtk_text_buffer_delete (GTK_TEXT_BUFFER (sub->buffer),
-                          iter,
-                          &start_text_iter);
+                          line_start,
+                          &text_start);
 
   if (tabs)
     {
@@ -297,7 +297,7 @@ adjust_alignment (Sub         *sub,
       indentation = g_strdup_printf ("%s%s", tabs, spaces);
 
       gtk_text_buffer_insert (GTK_TEXT_BUFFER (sub->buffer),
-                              iter,
+                              line_start,
                               indentation,
                               -1);
 
@@ -312,14 +312,14 @@ adjust_alignment (Sub         *sub,
       spaces = g_strnfill (new_length, ' ');
 
       gtk_text_buffer_insert (GTK_TEXT_BUFFER (sub->buffer),
-                              iter,
+                              line_start,
                               spaces,
                               new_length);
 
       g_free (spaces);
     }
 
-  gtk_text_iter_set_line_offset (iter, 0);
+  gtk_text_iter_set_line_offset (line_start, 0);
 }
 
 static void
@@ -367,7 +367,7 @@ replace (Sub                    *sub,
 
           if (text_start_column == cur_parenthesis_column)
             {
-              adjust_alignment (sub, &next_line);
+              adjust_alignment_at_line (sub, &next_line);
               break;
             }
 
