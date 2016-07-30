@@ -166,7 +166,7 @@ save_file (Sub *sub)
 }
 
 static void
-check_parenthesis_columns (GSList *list)
+check_parentheses_columns (GSList *list)
 {
   GSList *l;
   gint prev_value = G_MAXINT;
@@ -181,7 +181,7 @@ check_parenthesis_columns (GSList *list)
 
 /* Returns the column numbers in reverse order. */
 static GSList *
-get_parenthesis_columns (Sub               *sub,
+get_parentheses_columns (Sub               *sub,
                          const GtkTextIter *pos)
 {
   GtkTextIter limit;
@@ -209,7 +209,7 @@ get_parenthesis_columns (Sub               *sub,
       iter = match_end;
     }
 
-  check_parenthesis_columns (list);
+  check_parentheses_columns (list);
   return list;
 }
 
@@ -337,18 +337,18 @@ adjust_alignment_at_line (Sub         *sub,
   gtk_text_iter_set_line_offset (line_start, 0);
 }
 
-/* Takes ownership of @parenthesis_columns.
+/* Takes ownership of @parentheses_columns.
  * @pos is re-validated.
  */
 static void
 adjust_alignment_after_line (Sub         *sub,
-                             GSList      *parenthesis_columns,
+                             GSList      *parentheses_columns,
                              GtkTextIter *pos)
 {
   GtkTextMark *mark;
   GtkTextIter next_line;
 
-  if (parenthesis_columns == NULL)
+  if (parentheses_columns == NULL)
     return;
 
   mark = gtk_text_buffer_create_mark (GTK_TEXT_BUFFER (sub->buffer),
@@ -363,29 +363,29 @@ adjust_alignment_after_line (Sub         *sub,
 
       text_start_column = get_text_start_column (sub, &next_line);
 
-      while (parenthesis_columns != NULL)
+      while (parentheses_columns != NULL)
         {
-          gint cur_parenthesis_column = GPOINTER_TO_INT (parenthesis_columns->data);
+          gint cur_parenthesis_column = GPOINTER_TO_INT (parentheses_columns->data);
 
           if (text_start_column == cur_parenthesis_column)
             {
-              GSList *intra_parenthesis_columns;
+              GSList *intra_parentheses_columns;
 
-              intra_parenthesis_columns = get_parenthesis_columns (sub, &next_line);
+              intra_parentheses_columns = get_parentheses_columns (sub, &next_line);
 
               adjust_alignment_at_line (sub, &next_line);
 
-              parenthesis_columns = g_slist_concat (intra_parenthesis_columns, parenthesis_columns);
-              check_parenthesis_columns (parenthesis_columns);
+              parentheses_columns = g_slist_concat (intra_parentheses_columns, parentheses_columns);
+              check_parentheses_columns (parentheses_columns);
 
               break;
             }
 
           /* Parenthesis closed. */
-          parenthesis_columns = g_slist_delete_link (parenthesis_columns, parenthesis_columns);
+          parentheses_columns = g_slist_delete_link (parentheses_columns, parentheses_columns);
         }
 
-      if (parenthesis_columns == NULL)
+      if (parentheses_columns == NULL)
         break;
     }
 
@@ -395,7 +395,7 @@ adjust_alignment_after_line (Sub         *sub,
 
   gtk_text_buffer_delete_mark (GTK_TEXT_BUFFER (sub->buffer), mark);
 
-  g_slist_free (parenthesis_columns);
+  g_slist_free (parentheses_columns);
 }
 
 static void
@@ -404,11 +404,11 @@ replace (Sub                    *sub,
          const GtkTextIter      *match_start,
          GtkTextIter            *match_end)
 {
-  GSList *parenthesis_columns;
+  GSList *parentheses_columns;
   GtkTextIter start;
   GError *error = NULL;
 
-  parenthesis_columns = get_parenthesis_columns (sub, match_end);
+  parentheses_columns = get_parentheses_columns (sub, match_end);
 
   start = *match_start;
   gtk_source_search_context_replace2 (search_context,
@@ -420,7 +420,7 @@ replace (Sub                    *sub,
   if (error != NULL)
     g_error ("Error when doing the substitution: %s", error->message);
 
-  adjust_alignment_after_line (sub, parenthesis_columns, match_end);
+  adjust_alignment_after_line (sub, parentheses_columns, match_end);
 }
 
 static void
