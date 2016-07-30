@@ -63,11 +63,6 @@
  * https://mail.gnome.org/archives/desktop-devel-list/2015-September/msg00020.html
  */
 
-/* TODO check all opening parenthesis, not only the first one.
- * Aligning on the second opening parenthesis is done for example in a GObject
- * vfunc chain-up.
- */
-
 /* Note: yes, this script uses GTK+ and GtkSourceView, because
  * GtkSourceBuffer/GtkTextBuffer are good at navigating through text and editing
  * it. Another reason is because I'm familiar with those APIs, so it was easier
@@ -170,26 +165,37 @@ save_file (Sub *sub)
                                     sub);
 }
 
-static gint
-get_parenthesis_column (Sub               *sub,
-                        const GtkTextIter *iter)
+/* Returns the column numbers in reverse order. */
+static GSList *
+get_parenthesis_columns (Sub               *sub,
+                         const GtkTextIter *pos)
 {
-  GtkTextIter match_end;
   GtkTextIter limit;
+  GtkTextIter iter;
+  GtkTextIter match_end;
+  GSList *list = NULL;
 
-  limit = *iter;
+  limit = *pos;
   if (!gtk_text_iter_ends_line (&limit))
     gtk_text_iter_forward_to_line_end (&limit);
 
-  if (gtk_text_iter_forward_search (iter,
-                                    "(",
-                                    GTK_TEXT_SEARCH_TEXT_ONLY,
-                                    NULL,
-                                    &match_end,
-                                    &limit))
-    return gtk_source_view_get_visual_column (sub->view, &match_end);
+  iter = *pos;
+  while (gtk_text_iter_forward_search (&iter,
+                                       "(",
+                                       GTK_TEXT_SEARCH_TEXT_ONLY,
+                                       NULL,
+                                       &match_end,
+                                       &limit))
+    {
+      gint column;
 
-  return -1;
+      column = gtk_source_view_get_visual_column (sub->view, &match_end);
+      list = g_slist_prepend (list, GINT_TO_POINTER (column));
+
+      iter = match_end;
+    }
+
+  return list;
 }
 
 static void
@@ -322,12 +328,13 @@ replace (Sub                    *sub,
          const GtkTextIter      *match_start,
          GtkTextIter            *match_end)
 {
-  gint parenthesis_column;
+  GSList *parenthesis_columns;
   GtkTextIter start;
+  GtkTextIter next_line;
   GtkTextMark *mark;
   GError *error = NULL;
 
-  parenthesis_column = get_parenthesis_column (sub, match_end);
+  parenthesis_columns = get_parenthesis_columns (sub, match_end);
 
   start = *match_start;
   gtk_source_search_context_replace2 (search_context,
@@ -339,27 +346,37 @@ replace (Sub                    *sub,
   if (error != NULL)
     g_error ("Error when doing the substitution: %s", error->message);
 
+  if (parenthesis_columns == NULL)
+    return;
+
   mark = gtk_text_buffer_create_mark (GTK_TEXT_BUFFER (sub->buffer),
                                       NULL,
                                       match_end,
                                       FALSE);
 
-  if (parenthesis_column != -1)
+  next_line = *match_end;
+  while (gtk_text_iter_forward_line (&next_line))
     {
-      GtkTextIter next_line;
+      gint text_start_column;
 
-      next_line = *match_end;
-      while (gtk_text_iter_forward_line (&next_line))
+      text_start_column = get_text_start_column (sub, &next_line);
+
+      while (parenthesis_columns != NULL)
         {
-          gint text_start_column;
+          gint cur_parenthesis_column = GPOINTER_TO_INT (parenthesis_columns->data);
 
-          text_start_column = get_text_start_column (sub, &next_line);
+          if (text_start_column == cur_parenthesis_column)
+            {
+              adjust_alignment (sub, &next_line);
+              break;
+            }
 
-          if (text_start_column == parenthesis_column)
-            adjust_alignment (sub, &next_line);
-          else
-            break;
+          /* Parenthesis closed. */
+          parenthesis_columns = g_slist_delete_link (parenthesis_columns, parenthesis_columns);
         }
+
+      if (parenthesis_columns == NULL)
+        break;
     }
 
   gtk_text_buffer_get_iter_at_mark (GTK_TEXT_BUFFER (sub->buffer),
@@ -367,6 +384,8 @@ replace (Sub                    *sub,
                                     mark);
 
   gtk_text_buffer_delete_mark (GTK_TEXT_BUFFER (sub->buffer), mark);
+
+  g_slist_free (parenthesis_columns);
 }
 
 static void
