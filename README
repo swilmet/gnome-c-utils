@@ -60,6 +60,14 @@ To compile:
 $ cd lineup-substitution/
 $ make
 
+
+multi-line-substitution
+=======================
+
+Does a multi-line substitution. Or, In other words, a multi-line search and
+replace.
+
+
 check-chain-ups
 ===============
 
