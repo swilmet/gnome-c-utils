@@ -1,4 +1,16 @@
-Utilities when programming for GNOME, for the C language.
+Various utilities, useful when programming for GNOME with the C language.
+
+Some scripts are more general and can be useful for other tasks than GNOME.
+
+How to compile?
+===============
+
+A Makefile is present in each sub-directory. For example, to compile
+lineup-parameters, do:
+
+$ cd lineup-parameters/
+$ make
+
 
 lineup-parameters
 =================
@@ -27,10 +39,6 @@ frobnitz (Frobnitz  *frobnitz,
 
 Read the top of lineup-parameters.c for more details.
 
-To compile:
-$ cd lineup-parameters/
-$ make
-
 
 lineup-substitution
 ===================
@@ -56,16 +64,14 @@ indentation/alignment of the code (in combination with lineup-parameters).
 
 Read the top of lineup-substitution.c for more details.
 
-To compile:
-$ cd lineup-substitution/
-$ make
-
 
 multi-line-substitution
 =======================
 
 Does a multi-line substitution. Or, In other words, a multi-line search and
 replace.
+
+Read the top of multi-line-substitution.c for more details.
 
 
 check-chain-ups
@@ -74,7 +80,3 @@ check-chain-ups
 Basic check of GObject virtual function chain-ups.
 
 Read the top of check-chain-ups.c for more details.
-
-To compile:
-$ cd check-chain-ups/
-$ make
