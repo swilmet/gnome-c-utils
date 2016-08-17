@@ -1,6 +1,6 @@
-Various utilities, useful when programming for GNOME with the C language.
+Various utilities, useful when programming with GLib/GTK+, with the C language.
 
-Some scripts are more general and can be useful for other tasks than GNOME.
+Some scripts are more general and can be useful for other tasks.
 
 How to compile?
 ===============
@@ -68,7 +68,7 @@ Read the top of lineup-substitution.c for more details.
 multi-line-substitution
 =======================
 
-Does a multi-line substitution. Or, In other words, a multi-line search and
+Does a multi-line substitution. Or, in other words, a multi-line search and
 replace.
 
 Read the top of multi-line-substitution.c for more details.
