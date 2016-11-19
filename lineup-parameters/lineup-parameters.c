@@ -1,7 +1,7 @@
 /*
  * This file is part of gnome-c-utils.
  *
- * Copyright © 2013 Sébastien Wilmet <swilmet@gnome.org>
+ * Copyright © 2013, 2014, 2016 Sébastien Wilmet <swilmet@gnome.org>
  *
  * gnome-c-utils is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +20,10 @@
 /*
  * Line up parameters of function declarations.
  *
- * Usage: lineup-parameters [file]
- * If the file is given, its contents is replaced.
- * If the file is not given, stdin is read and the result is printed to stdout.
+ * Usage: lineup-parameters [file1] [file2] ...
+ * If no files are given, stdin is read and the result is printed to stdout.
+ * If one or more files are given, their contents are modified (WARNING: no
+ * backup is made!).
  *
  * The restrictions:
  * - The function name must be at column 0, followed by a space and an opening
@@ -546,25 +547,23 @@ gint
 main (gint   argc,
       gchar *argv[])
 {
+  gint arg_num;
+
   setlocale (LC_ALL, "");
 
-  if (argc > 2)
+  if (argc == 1)
     {
-      g_printerr ("Usage: %s [file]\n", argv[0]);
-      return EXIT_FAILURE;
+      handle_stdin ();
+      return EXIT_SUCCESS;
     }
 
-  if (argc == 2)
+  for (arg_num = 1; arg_num < argc; arg_num++)
     {
       GFile *file;
 
-      file = g_file_new_for_commandline_arg (argv[1]);
+      file = g_file_new_for_commandline_arg (argv[arg_num]);
       handle_file (file);
       g_object_unref (file);
-    }
-  else
-    {
-      handle_stdin ();
     }
 
   return EXIT_SUCCESS;
