@@ -397,10 +397,13 @@ print_function_declaration (GOutputStream  *output_stream,
 }
 
 static void
-parse_contents (GOutputStream  *output_stream,
-                gchar         **lines)
+parse_contents (const gchar   *input_str,
+                GOutputStream *output_stream)
 {
-  gchar **cur_line = lines;
+  gchar **lines;
+  gchar **cur_line;
+
+  lines = g_strsplit (input_str, "\n", 0);
 
   /* Skip the empty last line, to avoid adding an extra \n. */
   for (cur_line = lines; cur_line[0] != NULL && cur_line[1] != NULL; cur_line++)
@@ -427,6 +430,8 @@ parse_contents (GOutputStream  *output_stream,
 
       cur_line += length - 1;
     }
+
+  g_strfreev (lines);
 }
 
 static gchar *
@@ -502,42 +507,38 @@ get_stdout_output_stream (void)
 static void
 handle_stdin (void)
 {
-  gchar *contents;
-  gchar **contents_lines;
+  gchar *input_str;
   GOutputStream *output_stream;
   GError *error = NULL;
 
-  contents = get_stdin_contents ();
-  contents_lines = g_strsplit (contents, "\n", 0);
-  g_free (contents);
-
+  input_str = get_stdin_contents ();
   output_stream = get_stdout_output_stream ();
 
-  parse_contents (output_stream, contents_lines);
+  parse_contents (input_str, output_stream);
 
   g_output_stream_close (output_stream, NULL, &error);
   g_assert_no_error (error);
+
+  g_free (input_str);
   g_object_unref (output_stream);
 }
 
 static void
 handle_file (GFile *file)
 {
-  gchar *contents;
-  gchar **contents_lines;
+  gchar *input_str;
   GOutputStream *output_stream;
   GError *error = NULL;
 
-  contents = get_file_contents (file);
-  contents_lines = g_strsplit (contents, "\n", 0);
-  g_free (contents);
-
+  input_str = get_file_contents (file);
   output_stream = get_file_output_stream (file);
 
-  parse_contents (output_stream, contents_lines);
+  parse_contents (input_str, output_stream);
 
   g_output_stream_close (output_stream, NULL, &error);
   g_assert_no_error (error);
+
+  g_free (input_str);
   g_object_unref (output_stream);
 }
 
