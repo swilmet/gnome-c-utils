@@ -499,15 +499,52 @@ get_stdout_output_stream (void)
   return g_unix_output_stream_new (STDOUT_FILENO, FALSE);
 }
 
-gint
-main (gint   argc,
-      gchar *argv[])
+static void
+handle_stdin (void)
 {
   gchar *contents;
   gchar **contents_lines;
   GOutputStream *output_stream;
   GError *error = NULL;
 
+  contents = get_stdin_contents ();
+  contents_lines = g_strsplit (contents, "\n", 0);
+  g_free (contents);
+
+  output_stream = get_stdout_output_stream ();
+
+  parse_contents (output_stream, contents_lines);
+
+  g_output_stream_close (output_stream, NULL, &error);
+  g_assert_no_error (error);
+  g_object_unref (output_stream);
+}
+
+static void
+handle_file (GFile *file)
+{
+  gchar *contents;
+  gchar **contents_lines;
+  GOutputStream *output_stream;
+  GError *error = NULL;
+
+  contents = get_file_contents (file);
+  contents_lines = g_strsplit (contents, "\n", 0);
+  g_free (contents);
+
+  output_stream = get_file_output_stream (file);
+
+  parse_contents (output_stream, contents_lines);
+
+  g_output_stream_close (output_stream, NULL, &error);
+  g_assert_no_error (error);
+  g_object_unref (output_stream);
+}
+
+gint
+main (gint   argc,
+      gchar *argv[])
+{
   setlocale (LC_ALL, "");
 
   if (argc > 2)
@@ -521,24 +558,13 @@ main (gint   argc,
       GFile *file;
 
       file = g_file_new_for_commandline_arg (argv[1]);
-      contents = get_file_contents (file);
-      output_stream = get_file_output_stream (file);
+      handle_file (file);
       g_object_unref (file);
     }
   else
     {
-      contents = get_stdin_contents ();
-      output_stream = get_stdout_output_stream ();
+      handle_stdin ();
     }
-
-  contents_lines = g_strsplit (contents, "\n", 0);
-  g_free (contents);
-
-  parse_contents (output_stream, contents_lines);
-
-  g_output_stream_close (output_stream, NULL, &error);
-  g_assert_no_error (error);
-  g_object_unref (output_stream);
 
   return EXIT_SUCCESS;
 }
