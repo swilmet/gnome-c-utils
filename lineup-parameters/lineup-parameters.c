@@ -88,6 +88,7 @@
 
 #include <gio/gio.h>
 #include <gio/gunixinputstream.h>
+#include <gio/gunixoutputstream.h>
 #include <stdlib.h>
 #include <string.h>
 #include <locale.h>
@@ -108,6 +109,22 @@ parameter_info_free (ParameterInfo *param_info)
   g_free (param_info->type);
   g_free (param_info->name);
   g_slice_free (ParameterInfo, param_info);
+}
+
+static void
+write_to_output_stream (GOutputStream *output_stream,
+                        const gchar   *str)
+{
+  gsize bytes_written;
+  GError *error = NULL;
+
+  g_output_stream_write_all (output_stream,
+                             str,
+                             strlen (str),
+                             &bytes_written,
+                             NULL,
+                             &error);
+  g_assert_no_error (error);
 }
 
 static gboolean
@@ -285,7 +302,8 @@ compute_spacing (GSList *parameter_infos,
 }
 
 static void
-print_parameter (ParameterInfo *info,
+print_parameter (GOutputStream *output_stream,
+                 ParameterInfo *info,
                  guint          max_type_length,
                  guint          max_stars_length)
 {
@@ -294,32 +312,34 @@ print_parameter (ParameterInfo *info,
   gchar *spaces;
   gchar *stars;
 
-  g_print ("%s", info->type);
+  write_to_output_stream (output_stream, info->type);
 
   type_length = strlen (info->type);
   nb_spaces = max_type_length - type_length;
   g_assert (nb_spaces >= 0);
 
   spaces = g_strnfill (nb_spaces, ' ');
-  g_print ("%s ", spaces);
+  write_to_output_stream (output_stream, spaces);
+  write_to_output_stream (output_stream, " ");
   g_free (spaces);
 
   nb_spaces = max_stars_length - info->nb_stars;
   g_assert (nb_spaces >= 0);
   spaces = g_strnfill (nb_spaces, ' ');
-  g_print ("%s", spaces);
+  write_to_output_stream (output_stream, spaces);
   g_free (spaces);
 
   stars = g_strnfill (info->nb_stars, '*');
-  g_print ("%s", stars);
+  write_to_output_stream (output_stream, stars);
   g_free (stars);
 
-  g_print ("%s", info->name);
+  write_to_output_stream (output_stream, info->name);
 }
 
 static void
-print_function_declaration (gchar **lines,
-                            guint   length)
+print_function_declaration (GOutputStream  *output_stream,
+                            gchar         **lines,
+                            guint           length)
 {
   gchar **cur_line = lines;
   gchar *function_name;
@@ -333,7 +353,8 @@ print_function_declaration (gchar **lines,
   if (!match_function_name (*cur_line, &function_name, NULL))
     g_error ("The line doesn't match a function name.");
 
-  g_print ("%s (", function_name);
+  write_to_output_stream (output_stream, function_name);
+  write_to_output_stream (output_stream, " (");
 
   nb_spaces_to_parenthesis = strlen (function_name) + 2;
 
@@ -360,15 +381,15 @@ print_function_declaration (gchar **lines,
       ParameterInfo *info = l->data;
 
       if (l != parameter_infos)
-        g_print ("%s", spaces);
+        write_to_output_stream (output_stream, spaces);
 
-      print_parameter (info, max_type_length, max_stars_length);
+      print_parameter (output_stream, info, max_type_length, max_stars_length);
 
       if (l->next != NULL)
-        g_print (",\n");
+        write_to_output_stream (output_stream, ",\n");
     }
 
-  g_print (")\n");
+  write_to_output_stream (output_stream, ")\n");
 
   g_free (function_name);
   g_free (spaces);
@@ -376,7 +397,8 @@ print_function_declaration (gchar **lines,
 }
 
 static void
-parse_contents (gchar **lines)
+parse_contents (GOutputStream  *output_stream,
+                gchar         **lines)
 {
   gchar **cur_line = lines;
 
@@ -387,7 +409,8 @@ parse_contents (gchar **lines)
 
       if (!match_function_name (*cur_line, NULL, NULL))
         {
-          g_print ("%s\n", *cur_line);
+          write_to_output_stream (output_stream, *cur_line);
+          write_to_output_stream (output_stream, "\n");
           continue;
         }
 
@@ -395,11 +418,12 @@ parse_contents (gchar **lines)
 
       if (length == 0)
         {
-          g_print ("%s\n", *cur_line);
+          write_to_output_stream (output_stream, *cur_line);
+          write_to_output_stream (output_stream, "\n");
           continue;
         }
 
-      print_function_declaration (cur_line, length);
+      print_function_declaration (output_stream, cur_line, length);
 
       cur_line += length - 1;
     }
@@ -455,12 +479,20 @@ get_stdin_contents (void)
   return g_string_free (string, FALSE);
 }
 
+static GOutputStream *
+get_output_stream (void)
+{
+  return g_unix_output_stream_new (STDOUT_FILENO, FALSE);
+}
+
 gint
 main (gint   argc,
       gchar *argv[])
 {
   gchar *contents;
   gchar **contents_lines;
+  GOutputStream *output_stream;
+  GError *error = NULL;
 
   setlocale (LC_ALL, "");
 
@@ -478,7 +510,13 @@ main (gint   argc,
   contents_lines = g_strsplit (contents, "\n", 0);
   g_free (contents);
 
-  parse_contents (contents_lines);
+  output_stream = get_output_stream ();
+
+  parse_contents (output_stream, contents_lines);
+
+  g_output_stream_close (output_stream, NULL, &error);
+  g_assert_no_error (error);
+  g_object_unref (output_stream);
 
   return EXIT_SUCCESS;
 }
