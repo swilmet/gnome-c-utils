@@ -21,14 +21,14 @@
  * Line up parameters of function declarations.
  *
  * Usage: lineup-parameters [file]
- * If the file is not given, stdin is read.
- * The result is printed to stdout.
+ * If the file is given, its contents is replaced.
+ * If the file is not given, stdin is read and the result is printed to stdout.
  *
  * The restrictions:
  * - The function name must be at column 0, followed by a space and an opening
  *   parenthesis;
  * - One parameter per line;
- * - A paramater must follow certain rules (see the regex in the code), but it
+ * - A parameter must follow certain rules (see the regex in the code), but it
  *   doesn't accept all possibilities of the C language.
  * - The opening curly brace ("{") of the function must also be at column 0.
  *
@@ -430,21 +430,18 @@ parse_contents (GOutputStream  *output_stream,
 }
 
 static gchar *
-get_file_contents (gchar *arg)
+get_file_contents (GFile *file)
 {
-  GFile *file;
   gchar *path;
   gchar *contents;
   GError *error = NULL;
 
-  file = g_file_new_for_commandline_arg (arg);
   path = g_file_get_path (file);
   g_file_get_contents (path, &contents, NULL, &error);
 
   if (error != NULL)
     g_error ("Impossible to get file contents: %s", error->message);
 
-  g_object_unref (file);
   g_free (path);
   return contents;
 }
@@ -480,7 +477,24 @@ get_stdin_contents (void)
 }
 
 static GOutputStream *
-get_output_stream (void)
+get_file_output_stream (GFile *file)
+{
+  GFileOutputStream *output_stream;
+  GError *error = NULL;
+
+  output_stream = g_file_replace (file,
+                                  NULL,
+                                  FALSE,
+                                  G_FILE_CREATE_NONE,
+                                  NULL,
+                                  &error);
+  g_assert_no_error (error);
+
+  return G_OUTPUT_STREAM (output_stream);
+}
+
+static GOutputStream *
+get_stdout_output_stream (void)
 {
   return g_unix_output_stream_new (STDOUT_FILENO, FALSE);
 }
@@ -503,14 +517,22 @@ main (gint   argc,
     }
 
   if (argc == 2)
-    contents = get_file_contents (argv[1]);
+    {
+      GFile *file;
+
+      file = g_file_new_for_commandline_arg (argv[1]);
+      contents = get_file_contents (file);
+      output_stream = get_file_output_stream (file);
+      g_object_unref (file);
+    }
   else
-    contents = get_stdin_contents ();
+    {
+      contents = get_stdin_contents ();
+      output_stream = get_stdout_output_stream ();
+    }
 
   contents_lines = g_strsplit (contents, "\n", 0);
   g_free (contents);
-
-  output_stream = get_output_stream ();
 
   parse_contents (output_stream, contents_lines);
 
