@@ -95,8 +95,6 @@
 #include <locale.h>
 #include <unistd.h>
 
-#define USE_TABS FALSE
-
 typedef struct
 {
   gchar *type;
@@ -337,6 +335,26 @@ print_parameter (GOutputStream *output_stream,
   write_to_output_stream (output_stream, info->name);
 }
 
+static gboolean
+find_tab (gchar **lines,
+          guint   length)
+{
+  guint i;
+
+  for (i = 0; i < length; i++)
+    {
+      gchar *cur_line = lines[i];
+
+      if (cur_line == NULL)
+        return FALSE;
+
+      if (strchr (cur_line, '\t') != NULL)
+        return TRUE;
+    }
+
+  return FALSE;
+}
+
 static void
 print_function_declaration (GOutputStream  *output_stream,
                             gchar         **lines,
@@ -359,7 +377,7 @@ print_function_declaration (GOutputStream  *output_stream,
 
   nb_spaces_to_parenthesis = strlen (function_name) + 2;
 
-  if (USE_TABS)
+  if (find_tab (lines, length))
     {
       gchar *tabs = g_strnfill (nb_spaces_to_parenthesis / 8, '\t');
       gchar *spaces_after_tabs = g_strnfill (nb_spaces_to_parenthesis % 8, ' ');
