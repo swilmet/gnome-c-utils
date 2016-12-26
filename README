@@ -74,6 +74,16 @@ replace.
 Read the top of multi-line-substitution.c for more details.
 
 
+smart-c-comment-substitution
+============================
+
+Smart substitution (or, search and replace) in C comments. Can be useful to
+change license headers. The script ignores spacing differences and ignores the
+positions of newlines (where a sentence is split).
+
+Read the top of smart-c-comment-substitution.c for more details.
+
+
 check-chain-ups
 ===============
 

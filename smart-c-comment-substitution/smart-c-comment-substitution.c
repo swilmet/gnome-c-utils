@@ -17,6 +17,30 @@
  * along with gnome-c-utils.  If not, see <http://www.gnu.org/licenses/>.
  */
 
+/*
+ * Smart substitution (or, search and replace) in C comments. Can be useful to
+ * change license headers.
+ *
+ * Comments with the // style are not supported, only C89-compliant comments
+ * are supported, like the comments present in this file.
+ *
+ * Usage:
+ * $ ./smart-c-comment-substitution <search-text-file> <replacement-file> <file1> [file2] ...
+ * <file1>, [file2], etc must be *.c or *.h files.
+ * Warning: the script modifies directly <file1>, [file2], etc.
+ *
+ * <search-text-file> should contain a fragment of a C comment. The script
+ * canonicalizes its content, to have a list of words to search. When doing the
+ * search, the script tries to match the list of words in C comments, by
+ * ignoring spacing differences and ignoring the positions of newlines (where a
+ * sentence is split).
+ *
+ * It's a case sensitive search, but it would not be complicated to make it case
+ * insensitive.
+ *
+ * When a match is found, it is replaced by the content of <replacement-file>.
+ */
+
 #include <gtksourceview/gtksource.h>
 #include <stdlib.h>
 #include <locale.h>
