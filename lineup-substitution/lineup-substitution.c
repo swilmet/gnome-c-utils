@@ -111,6 +111,8 @@ sub_new (const gchar *search_text,
   g_object_unref (location);
 
   sub->buffer = gtk_source_buffer_new (NULL);
+  gtk_source_buffer_set_implicit_trailing_newline (sub->buffer, FALSE);
+
   sub->view = GTK_SOURCE_VIEW (gtk_source_view_new_with_buffer (sub->buffer));
   g_object_ref_sink (sub->view);
 

@@ -67,6 +67,7 @@ sub_new (const gchar *search_text,
   g_object_unref (location);
 
   sub->buffer = gtk_source_buffer_new (NULL);
+  gtk_source_buffer_set_implicit_trailing_newline (sub->buffer, FALSE);
 
   return sub;
 }
