@@ -35,8 +35,8 @@
  * ignoring spacing differences and ignoring the positions of newlines (where a
  * sentence is split).
  *
- * It's a case sensitive search, but it would not be complicated to make it case
- * insensitive.
+ * By default the search is case insensitive, but it can be changed with the
+ * #define CASE_SENSITIVE below.
  *
  * When a match is found, it is replaced by the content of <replacement-file>.
  */
@@ -44,6 +44,8 @@
 #include <gtksourceview/gtksource.h>
 #include <stdlib.h>
 #include <locale.h>
+
+#define CASE_SENSITIVE FALSE
 
 typedef struct _Sub Sub;
 struct _Sub
@@ -384,6 +386,28 @@ is_in_same_c_comment (Sub               *sub,
   return gtk_text_iter_compare (end, &comment_end) <= 0;
 }
 
+static gint
+my_strcmp0 (const gchar *str1,
+            const gchar *str2)
+{
+  gchar *str1_casefolded;
+  gchar *str2_casefolded;
+  gint result;
+
+  if (str1 == NULL || str2 == NULL || CASE_SENSITIVE)
+    return g_strcmp0 (str1, str2);
+
+  str1_casefolded = g_utf8_casefold (str1, -1);
+  str2_casefolded = g_utf8_casefold (str2, -1);
+
+  result = g_strcmp0 (str1_casefolded, str2_casefolded);
+
+  g_free (str1_casefolded);
+  g_free (str2_casefolded);
+
+  return result;
+}
+
 static gboolean
 match_search_text (Sub               *sub,
                    const GtkTextIter *match_start,
@@ -402,7 +426,7 @@ match_search_text (Sub               *sub,
       gchar *word;
 
       word = next_word (sub, &iter);
-      if (g_strcmp0 (word, word_to_match) != 0)
+      if (my_strcmp0 (word, word_to_match) != 0)
         {
           g_free (word);
           return FALSE;
@@ -469,7 +493,7 @@ do_substitution (Sub *sub)
 
   search_settings = gtk_source_search_settings_new ();
   gtk_source_search_settings_set_search_text (search_settings, first_word);
-  gtk_source_search_settings_set_case_sensitive (search_settings, TRUE);
+  gtk_source_search_settings_set_case_sensitive (search_settings, CASE_SENSITIVE);
 
   search_context = gtk_source_search_context_new (sub->buffer, search_settings);
 
