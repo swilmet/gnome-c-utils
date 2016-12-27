@@ -551,7 +551,12 @@ load_cb (GtkSourceFileLoader *loader,
   g_object_unref (loader);
 
   if (error != NULL)
-    g_error ("Error when loading file: %s", error->message);
+    {
+      g_warning ("Error when loading file: %s", error->message);
+      g_clear_error (&error);
+      gtk_main_quit ();
+      return;
+    }
 
   set_c_language (sub);
   do_substitution (sub);
