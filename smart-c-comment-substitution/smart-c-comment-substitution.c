@@ -637,6 +637,8 @@ main (gint   argc,
       const gchar *filename = argv[arg_num];
       Sub *sub;
 
+      g_print ("Processing %s\n", filename);
+
       sub = sub_new (canonicalized_search_text, replacement, filename);
       sub_launch (sub);
       gtk_main ();
