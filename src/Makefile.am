@@ -8,9 +8,13 @@ AM_LDFLAGS = $(WARN_LDFLAGS)
 LDADD = $(DEP_LIBS)
 
 bin_PROGRAMS =			\
-	check-chain-ups
+	check-chain-ups		\
+	lineup-parameters
 
 check_chain_ups_SOURCES =	\
 	check-chain-ups.c
+
+lineup_parameters_SOURCES =	\
+	lineup-parameters.c
 
 -include $(top_srcdir)/git.mk

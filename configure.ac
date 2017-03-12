@@ -11,7 +11,7 @@ AC_INIT([gnome-c-utils],
 AX_REQUIRE_DEFINED([AX_IS_RELEASE])
 AX_IS_RELEASE([git-directory])
 
-AC_CONFIG_SRCDIR([lineup-parameters/lineup-parameters.c])
+AC_CONFIG_SRCDIR([src/lineup-parameters.c])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
@@ -30,6 +30,8 @@ AX_COMPILER_FLAGS([WARN_CFLAGS], [WARN_LDFLAGS])
 AX_REQUIRE_DEFINED([PKG_CHECK_MODULES])
 PKG_CHECK_MODULES([DEP],
 		  [glib-2.0 >= 2.50
+		   gio-2.0
+		   gio-unix-2.0
 		   gtk+-3.0 >= 3.22
 		   gtksourceview-3.0 >= 3.22])
 

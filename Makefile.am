@@ -1,6 +1,5 @@
 SUBDIRS =				\
 	src				\
-	lineup-parameters		\
 	lineup-substitution		\
 	multi-line-substitution		\
 	smart-c-comment-substitution
