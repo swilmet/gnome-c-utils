@@ -1,6 +1,4 @@
-SUBDIRS =				\
-	src				\
-	smart-c-comment-substitution
+SUBDIRS = src
 
 MAINTAINERCLEANFILES = \
 	$(GITIGNORE_MAINTAINERCLEANFILES_TOPLEVEL) \
