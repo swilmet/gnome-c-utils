@@ -7,10 +7,11 @@ AM_LDFLAGS = $(WARN_LDFLAGS)
 
 LDADD = $(DEP_LIBS)
 
-bin_PROGRAMS =			\
-	check-chain-ups		\
-	lineup-parameters	\
-	lineup-substitution
+bin_PROGRAMS =				\
+	check-chain-ups			\
+	lineup-parameters		\
+	lineup-substitution		\
+	multi-line-substitution
 
 check_chain_ups_SOURCES =	\
 	check-chain-ups.c
@@ -20,5 +21,8 @@ lineup_parameters_SOURCES =	\
 
 lineup_substitution_SOURCES =	\
 	lineup-substitution.c
+
+multi_line_substitution_SOURCES =	\
+	multi-line-substitution.c
 
 -include $(top_srcdir)/git.mk

@@ -1,6 +1,5 @@
 SUBDIRS =				\
 	src				\
-	multi-line-substitution		\
 	smart-c-comment-substitution
 
 MAINTAINERCLEANFILES = \
