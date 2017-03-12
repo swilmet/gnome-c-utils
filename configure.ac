@@ -36,6 +36,7 @@ PKG_CHECK_MODULES([DEP],
 # Output files
 AC_CONFIG_FILES([
 	Makefile
+	src/Makefile
 ])
 
 AC_OUTPUT

@@ -1,5 +1,5 @@
 SUBDIRS =				\
-	check-chain-ups			\
+	src				\
 	lineup-parameters		\
 	lineup-substitution		\
 	multi-line-substitution		\
