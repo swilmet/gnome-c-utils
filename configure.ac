@@ -22,9 +22,10 @@ AM_SILENT_RULES([yes])
 AC_PROG_CC
 AC_PROG_INSTALL
 
-# Compile warnings
+# Compile warnings. There can be deprecation warnings at any time, so disable
+# -Werror by default with the [yes] argument.
 AX_REQUIRE_DEFINED([AX_COMPILER_FLAGS])
-AX_COMPILER_FLAGS([WARN_CFLAGS], [WARN_LDFLAGS])
+AX_COMPILER_FLAGS([WARN_CFLAGS], [WARN_LDFLAGS], [yes])
 
 # Dependencies
 AX_REQUIRE_DEFINED([PKG_CHECK_MODULES])
