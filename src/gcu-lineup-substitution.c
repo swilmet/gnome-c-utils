@@ -21,7 +21,7 @@
  * Do a substitution and at the same time keep a good alignment of parameters on
  * the parenthesis.
  *
- * Usage: lineup-substitution <search-text> <replacement> <file1> [file2] ...
+ * Usage: gcu-lineup-substitution <search-text> <replacement> <file1> [file2] ...
  * WARNING: the script modifies the files!
  *
  * Example:
@@ -30,7 +30,7 @@
  *                param2,
  *                param3);
  *
- * $ lineup-substitution function_call another_beautiful_name file.c
+ * $ gcu-lineup-substitution function_call another_beautiful_name file.c
  *
  * another_beautiful_name (param1,
  *                         param2,
@@ -53,7 +53,7 @@
  *
  * The script works with both tabs and spaces. It just sees what is used before
  * adjusting the alignment, and inserts tabs and/or spaces accordingly. Run the
- * script on tests/lineup-substitution/sample.c to see the result.
+ * script on tests/gcu-lineup-substitution/sample.c to see the result.
  *
  * The script doesn't fix broken alignment. It assumes that the code is
  * initially well indented. Fixing broken alignment is a harder problem to

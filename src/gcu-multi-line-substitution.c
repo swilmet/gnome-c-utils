@@ -21,7 +21,7 @@
  * Does a multi-line substitution (or, multi-line search and replace).
  *
  * Example:
- * $ ./multi-line-substitution license-header-old license-header-new *.{c,h}
+ * $ ./gcu-multi-line-substitution license-header-old license-header-new *.{c,h}
  */
 
 /* Note: yes, this script uses GTK+ and GtkSourceView, because

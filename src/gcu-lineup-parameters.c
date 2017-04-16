@@ -20,7 +20,7 @@
 /*
  * Line up parameters of function declarations.
  *
- * Usage: lineup-parameters [file1] [file2] ...
+ * Usage: gcu-lineup-parameters [file1] [file2] ...
  * If no files are given, stdin is read and the result is printed to stdout.
  * If one or more files are given, their contents are modified (WARNING: no
  * backup is made!).
@@ -37,7 +37,7 @@
  *
  * The script works with both tabs and spaces. It just sees what is used before
  * doing the line-up, and inserts tabs and/or spaces accordingly. Run the script
- * on tests/lineup-parameters/sample.c to see the result.
+ * on tests/gcu-lineup-parameters/sample.c to see the result.
  *
  * Example:
  *
@@ -71,7 +71,7 @@
  * - place the cursor at the function's name;
  * - press V to start the line selection;
  * - press ]] to go to the "{";
- * - type ":" followed by "!lineup-parameters".
+ * - type ":" followed by "!gcu-lineup-parameters".
  *
  * Note: the "{" is required in the selection, to detect that we are in a
  * function declaration.
@@ -82,7 +82,7 @@
  *
  * function! LineupParameters()
  *         let l:winview = winsaveview()
- *         execute "normal {V]]:!lineup-parameters\<CR>"
+ *         execute "normal {V]]:!gcu-lineup-parameters\<CR>"
  *         call winrestview(l:winview)
  * endfunction
  *

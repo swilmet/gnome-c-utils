@@ -20,7 +20,7 @@
 /*
  * Basic check of GObject virtual function chain-ups.
  *
- * Usage: check-chain-ups <file1.c> [file2.c] ...
+ * Usage: gcu-check-chain-ups <file1.c> [file2.c] ...
  *
  * For a less verbose output, redirect stdout to /dev/null. The warnings/errors
  * are printed on stderr.

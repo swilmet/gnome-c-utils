@@ -17,8 +17,8 @@ Tests/sample files
 There are sample files in the tests/ directory.
 
 
-lineup-parameters
-=================
+gcu-lineup-parameters
+=====================
 
 Line up parameters of function declarations.
 
@@ -42,11 +42,11 @@ frobnitz (Frobnitz  *frobnitz,
   ...
 }
 
-Read the top of lineup-parameters.c for more details.
+Read the top of gcu-lineup-parameters.c for more details.
 
 
-lineup-substitution
-===================
+gcu-lineup-substitution
+=======================
 
 Do a substitution and at the same time keep a good alignment of parameters on
 the parenthesis.
@@ -67,31 +67,31 @@ lineup-substitution can be useful to rename a GObject class, or to change the
 namespace of a group of GObjects, while still keeping a good
 indentation/alignment of the code (in combination with lineup-parameters).
 
-Read the top of lineup-substitution.c for more details.
+Read the top of gcu-lineup-substitution.c for more details.
 
 
-multi-line-substitution
-=======================
+gcu-multi-line-substitution
+===========================
 
 Does a multi-line substitution. Or, in other words, a multi-line search and
 replace.
 
-Read the top of multi-line-substitution.c for more details.
+Read the top of gcu-multi-line-substitution.c for more details.
 
 
-smart-c-comment-substitution
-============================
+gcu-smart-c-comment-substitution
+================================
 
 Smart substitution (or, search and replace) in C comments. Can be useful to
 change license headers. The script ignores spacing differences and ignores the
 positions of newlines (where a sentence is split).
 
-Read the top of smart-c-comment-substitution.c for more details.
+Read the top of gcu-smart-c-comment-substitution.c for more details.
 
 
-check-chain-ups
-===============
+gcu-check-chain-ups
+===================
 
 Basic check of GObject virtual function chain-ups.
 
-Read the top of check-chain-ups.c for more details.
+Read the top of gcu-check-chain-ups.c for more details.
