@@ -37,7 +37,7 @@
  *
  * The script works with both tabs and spaces. It just sees what is used before
  * doing the line-up, and inserts tabs and/or spaces accordingly. Run the script
- * on sample.c to see the result.
+ * on tests/lineup-parameters/sample.c to see the result.
  *
  * Example:
  *
