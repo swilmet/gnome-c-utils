@@ -53,7 +53,7 @@
  *
  * The script works with both tabs and spaces. It just sees what is used before
  * adjusting the alignment, and inserts tabs and/or spaces accordingly. Run the
- * script on sample.c to see the result.
+ * script on tests/lineup-substitution/sample.c to see the result.
  *
  * The script doesn't fix broken alignment. It assumes that the code is
  * initially well indented. Fixing broken alignment is a harder problem to
