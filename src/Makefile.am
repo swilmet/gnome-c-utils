@@ -7,26 +7,26 @@ AM_LDFLAGS = $(WARN_LDFLAGS)
 
 LDADD = $(DEP_LIBS)
 
-bin_PROGRAMS =				\
-	check-chain-ups			\
-	lineup-parameters		\
-	lineup-substitution		\
-	multi-line-substitution		\
-	smart-c-comment-substitution
+bin_PROGRAMS =					\
+	gcu-check-chain-ups			\
+	gcu-lineup-parameters			\
+	gcu-lineup-substitution			\
+	gcu-multi-line-substitution		\
+	gcu-smart-c-comment-substitution
 
-check_chain_ups_SOURCES =	\
-	check-chain-ups.c
+gcu_check_chain_ups_SOURCES = \
+	gcu-check-chain-ups.c
 
-lineup_parameters_SOURCES =	\
-	lineup-parameters.c
+gcu_lineup_parameters_SOURCES = \
+	gcu-lineup-parameters.c
 
-lineup_substitution_SOURCES =	\
-	lineup-substitution.c
+gcu_lineup_substitution_SOURCES = \
+	gcu-lineup-substitution.c
 
-multi_line_substitution_SOURCES =	\
-	multi-line-substitution.c
+gcu_multi_line_substitution_SOURCES = \
+	gcu-multi-line-substitution.c
 
-smart_c_comment_substitution_SOURCES =	\
-	smart-c-comment-substitution.c
+gcu_smart_c_comment_substitution_SOURCES = \
+	gcu-smart-c-comment-substitution.c
 
 -include $(top_srcdir)/git.mk

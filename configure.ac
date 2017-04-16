@@ -11,7 +11,7 @@ AC_INIT([gnome-c-utils],
 AX_REQUIRE_DEFINED([AX_IS_RELEASE])
 AX_IS_RELEASE([git-directory])
 
-AC_CONFIG_SRCDIR([src/lineup-parameters.c])
+AC_CONFIG_SRCDIR([src/gcu-lineup-parameters.c])
 AC_CONFIG_HEADER([config.h])
 AC_CONFIG_MACRO_DIR([m4])
 
