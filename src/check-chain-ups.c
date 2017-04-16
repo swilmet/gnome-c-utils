@@ -60,10 +60,10 @@
  */
 
 /* Note: yes, this script uses GTK+ and GtkSourceView, because
- * GtkSourceBuffer/GtkTextBuffer are good at navigating through text and editing
- * it. Another reason is because I'm familiar with those APIs, so it was easier
- * for me to write the code. And in the future, this code might be useful for a
- * graphical text editor based on GtkSourceView.
+ * GtkSourceBuffer/GtkTextBuffer are good at navigating through text. Another
+ * reason is because I'm familiar with those APIs, so it was easier for me to
+ * write the code. And in the future, this code might be useful for a graphical
+ * text editor based on GtkSourceView.
  */
 #include <gtksourceview/gtksource.h>
 #include <stdlib.h>
