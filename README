@@ -2,14 +2,19 @@ Various utilities, useful when programming with GLib/GTK+, with the C language.
 
 Some scripts are more general and can be useful for other tasks.
 
-How to compile?
-===============
+Installation
+============
 
-A Makefile is present in each sub-directory. For example, to compile
-lineup-parameters, do:
-
-$ cd lineup-parameters/
+$ ./autogen.sh
 $ make
+[ Become root if necessary ]
+$ make install
+
+
+Tests/sample files
+==================
+
+There are sample files in the tests/ directory.
 
 
 lineup-parameters
@@ -58,7 +63,7 @@ another_beautiful_name (param1,
                         param2,
                         param3);
 
-lineup-substitution can be useful to rename a GObject class, or change the
+lineup-substitution can be useful to rename a GObject class, or to change the
 namespace of a group of GObjects, while still keeping a good
 indentation/alignment of the code (in combination with lineup-parameters).
 
