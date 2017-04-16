@@ -283,7 +283,7 @@ adjust_alignment_at_line (Sub         *sub,
 {
   GtkTextIter text_start;
   gint new_length;
-  gboolean tabs;
+  gboolean align_with_tabs;
 
   g_assert (gtk_text_iter_starts_line (line_start));
 
@@ -297,13 +297,13 @@ adjust_alignment_at_line (Sub         *sub,
                 g_utf8_strlen (sub->replacement, -1));
   g_assert_cmpint (new_length, >=, 0);
 
-  tabs = indentation_contains_tab (line_start);
+  align_with_tabs = indentation_contains_tab (line_start);
 
   gtk_text_buffer_delete (GTK_TEXT_BUFFER (sub->buffer),
                           line_start,
                           &text_start);
 
-  if (tabs)
+  if (align_with_tabs)
     {
       gchar *tabs;
       gchar *spaces;
