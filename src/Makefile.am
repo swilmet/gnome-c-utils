@@ -9,6 +9,7 @@ LDADD = $(DEP_LIBS)
 
 bin_PROGRAMS =					\
 	gcu-check-chain-ups			\
+	gcu-include-config-h			\
 	gcu-lineup-parameters			\
 	gcu-lineup-substitution			\
 	gcu-multi-line-substitution		\
@@ -16,6 +17,9 @@ bin_PROGRAMS =					\
 
 gcu_check_chain_ups_SOURCES = \
 	gcu-check-chain-ups.c
+
+gcu_include_config_h_SOURCES = \
+	gcu-include-config-h.c
 
 gcu_lineup_parameters_SOURCES = \
 	gcu-lineup-parameters.c

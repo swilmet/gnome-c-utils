@@ -34,7 +34,8 @@ PKG_CHECK_MODULES([DEP],
 		   gio-2.0
 		   gio-unix-2.0
 		   gtk+-3.0 >= 3.22
-		   gtksourceview-3.0 >= 3.22])
+		   gtksourceview-3.0 >= 3.24
+		   gtef-2 >= 2.0])
 
 # Output files
 AC_CONFIG_FILES([

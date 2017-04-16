@@ -95,3 +95,11 @@ gcu-check-chain-ups
 Basic check of GObject virtual function chain-ups.
 
 Read the top of gcu-check-chain-ups.c for more details.
+
+
+gcu-include-config-h
+====================
+
+Ensures that config.h is #included in *.c files.
+
+Read the top of gcu-include-config-h.c for more details.
