@@ -132,7 +132,7 @@ insert_include_config (GtefBuffer *buffer)
 
   gtk_text_buffer_insert (GTK_TEXT_BUFFER (buffer),
                           &pos,
-                          "#if HAVE_CONFIG_H\n"
+                          "#ifdef HAVE_CONFIG_H\n"
                           "#include <config.h>\n"
                           "#endif\n\n",
                           -1);
