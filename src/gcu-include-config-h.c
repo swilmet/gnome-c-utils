@@ -82,6 +82,9 @@ remove_existing_include_config (GtefBuffer *buffer)
     gtk_text_buffer_delete (GTK_TEXT_BUFFER (buffer), &match_start, &match_end);
 }
 
+/* FIXME: sometimes the first #include is inside an #if, #ifdef, etc.
+ * Look at previous lines and skip them if they start with "#if".
+ */
 static gboolean
 find_first_include (GtkSourceBuffer *buffer,
                     GtkTextIter     *iter)
