@@ -8,12 +8,16 @@ AM_LDFLAGS = $(WARN_LDFLAGS)
 LDADD = $(DEP_LIBS)
 
 bin_PROGRAMS =					\
+	gcu-case-converter			\
 	gcu-check-chain-ups			\
 	gcu-include-config-h			\
 	gcu-lineup-parameters			\
 	gcu-lineup-substitution			\
 	gcu-multi-line-substitution		\
 	gcu-smart-c-comment-substitution
+
+gcu_case_converter_SOURCES = \
+	gcu-case-converter.c
 
 gcu_check_chain_ups_SOURCES = \
 	gcu-check-chain-ups.c

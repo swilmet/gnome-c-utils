@@ -70,6 +70,14 @@ indentation/alignment of the code (in combination with lineup-parameters).
 Read the top of gcu-lineup-substitution.c for more details.
 
 
+gcu-case-converter
+==================
+
+Converts a word to lower_case, UPPER_CASE or CamelCase.
+
+Read the top of gcu-case-converter.c for more details.
+
+
 gcu-multi-line-substitution
 ===========================
 
