@@ -51,7 +51,7 @@ find_include_config (GtkSourceBuffer *buffer,
 
   /* The regex is not perfect but it's good enough for my needs. */
   gtk_source_search_settings_set_search_text (search_settings,
-                                              "(^#if\\s+HAVE_CONFIG_H\\s*$\\n)?"
+                                              "(^#if(def)?\\s+HAVE_CONFIG_H\\s*$\\n)?"
                                               "^#\\s*include\\s+(\"config\\.h\"|<config\\.h>)\\s*$\\n"
                                               "(^#endif\\s*$\\n)?"
                                               "(\\n\\s)*");
