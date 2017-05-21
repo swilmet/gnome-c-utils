@@ -12,7 +12,7 @@ GNOME 3.24, March 2017
 	* Refactorings.
 	* Support passing several files to the command line.
 	* The script now modifies the files. It is more convenient than doing:
-	  `lineup-paramaters file > tmp && mv tmp file`
+	  `lineup-parameters file > tmp && mv tmp file`
 	* Support spaces vs tabs dynamically instead of having a #define.
 * Other small improvements.
 
