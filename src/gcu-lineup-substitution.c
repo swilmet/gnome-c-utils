@@ -1,7 +1,7 @@
 /*
  * This file is part of gnome-c-utils.
  *
- * Copyright © 2015 Sébastien Wilmet <swilmet@gnome.org>
+ * Copyright © 2015, 2017 Sébastien Wilmet <swilmet@gnome.org>
  *
  * gnome-c-utils is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@
  * for me to write the code. And in the future, this code might be useful for a
  * graphical text editor based on GtkSourceView.
  */
-#include <gtksourceview/gtksource.h>
+#include <gtef/gtef.h>
 #include <stdlib.h>
 #include <locale.h>
 
@@ -78,8 +78,8 @@ struct _Sub
 {
   gchar *search_text;
   gchar *replacement;
-  GtkSourceFile *file;
-  GtkSourceBuffer *buffer;
+
+  GtefBuffer *buffer;
 
   /* Used to call gtk_source_view_get_visual_column(), so tabs are supported for
    * free.
@@ -94,6 +94,7 @@ sub_new (const gchar *search_text,
 {
   Sub *sub = g_new0 (Sub, 1);
   GFile *location;
+  GtefFile *file;
 
   g_assert (search_text != NULL);
   g_assert (search_text[0] != '\0');
@@ -104,16 +105,15 @@ sub_new (const gchar *search_text,
   sub->search_text = g_strdup (search_text);
   sub->replacement = g_strdup (replacement);
 
-  sub->file = gtk_source_file_new ();
+  sub->buffer = gtef_buffer_new ();
+  gtk_source_buffer_set_implicit_trailing_newline (GTK_SOURCE_BUFFER (sub->buffer), FALSE);
 
   location = g_file_new_for_commandline_arg (filename);
-  gtk_source_file_set_location (sub->file, location);
+  file = gtef_buffer_get_file (sub->buffer);
+  gtef_file_set_location (file, location);
   g_object_unref (location);
 
-  sub->buffer = gtk_source_buffer_new (NULL);
-  gtk_source_buffer_set_implicit_trailing_newline (sub->buffer, FALSE);
-
-  sub->view = GTK_SOURCE_VIEW (gtk_source_view_new_with_buffer (sub->buffer));
+  sub->view = GTK_SOURCE_VIEW (gtk_source_view_new_with_buffer (GTK_SOURCE_BUFFER (sub->buffer)));
   g_object_ref_sink (sub->view);
 
   return sub;
@@ -126,7 +126,6 @@ sub_free (Sub *sub)
     {
       g_free (sub->search_text);
       g_free (sub->replacement);
-      g_clear_object (&sub->file);
       g_clear_object (&sub->buffer);
       g_clear_object (&sub->view);
 
@@ -135,13 +134,13 @@ sub_free (Sub *sub)
 }
 
 static void
-save_cb (GtkSourceFileSaver *saver,
-         GAsyncResult       *result,
-         Sub                *sub)
+save_cb (GtefFileSaver *saver,
+         GAsyncResult  *result,
+         Sub           *sub)
 {
   GError *error = NULL;
 
-  gtk_source_file_saver_save_finish (saver, result, &error);
+  gtef_file_saver_save_finish (saver, result, &error);
   g_object_unref (saver);
 
   if (error != NULL)
@@ -153,18 +152,20 @@ save_cb (GtkSourceFileSaver *saver,
 static void
 save_file (Sub *sub)
 {
-  GtkSourceFileSaver *saver;
+  GtefFile *file;
+  GtefFileSaver *saver;
 
-  saver = gtk_source_file_saver_new (sub->buffer, sub->file);
+  file = gtef_buffer_get_file (sub->buffer);
+  saver = gtef_file_saver_new (sub->buffer, file);
 
-  gtk_source_file_saver_save_async (saver,
-                                    G_PRIORITY_HIGH,
-                                    NULL,
-                                    NULL,
-                                    NULL,
-                                    NULL,
-                                    (GAsyncReadyCallback) save_cb,
-                                    sub);
+  gtef_file_saver_save_async (saver,
+                              G_PRIORITY_HIGH,
+                              NULL,
+                              NULL,
+                              NULL,
+                              NULL,
+                              (GAsyncReadyCallback) save_cb,
+                              sub);
 }
 
 static void
@@ -438,7 +439,8 @@ do_substitution (Sub *sub)
   gtk_source_search_settings_set_search_text (search_settings, sub->search_text);
   gtk_source_search_settings_set_case_sensitive (search_settings, TRUE);
 
-  search_context = gtk_source_search_context_new (sub->buffer, search_settings);
+  search_context = gtk_source_search_context_new (GTK_SOURCE_BUFFER (sub->buffer),
+                                                  search_settings);
 
   gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (sub->buffer), &iter);
 
@@ -457,13 +459,13 @@ do_substitution (Sub *sub)
 }
 
 static void
-load_cb (GtkSourceFileLoader *loader,
-         GAsyncResult        *result,
-         Sub                 *sub)
+load_cb (GtefFileLoader *loader,
+         GAsyncResult   *result,
+         Sub            *sub)
 {
   GError *error = NULL;
 
-  gtk_source_file_loader_load_finish (loader, result, &error);
+  gtef_file_loader_load_finish (loader, result, &error);
   g_object_unref (loader);
 
   if (error != NULL)
@@ -476,18 +478,20 @@ load_cb (GtkSourceFileLoader *loader,
 static void
 sub_launch (Sub *sub)
 {
-  GtkSourceFileLoader *loader;
+  GtefFile *file;
+  GtefFileLoader *loader;
 
-  loader = gtk_source_file_loader_new (sub->buffer, sub->file);
+  file = gtef_buffer_get_file (sub->buffer);
+  loader = gtef_file_loader_new (sub->buffer, file);
 
-  gtk_source_file_loader_load_async (loader,
-                                     G_PRIORITY_HIGH,
-                                     NULL,
-                                     NULL,
-                                     NULL,
-                                     NULL,
-                                     (GAsyncReadyCallback) load_cb,
-                                     sub);
+  gtef_file_loader_load_async (loader,
+                               G_PRIORITY_HIGH,
+                               NULL,
+                               NULL,
+                               NULL,
+                               NULL,
+                               (GAsyncReadyCallback) load_cb,
+                               sub);
 }
 
 gint
