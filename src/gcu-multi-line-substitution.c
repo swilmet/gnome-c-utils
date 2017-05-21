@@ -20,10 +20,13 @@
 /*
  * Does a multi-line substitution (or, multi-line search and replace).
  *
- * Example:
- * $ ./gcu-multi-line-substitution license-header-old license-header-new *.{c,h}
+ * Usage:
+ * $ ./gcu-multi-line-substitution <search-text-file> <replacement-file> <file1> [file2] ...
+ * WARNING: the script directly modifies <file1>, [file2], ... without doing
+ * backups first!
  *
- * WARNING: the script directly modifies the files without doing backups first!
+ * Example:
+ * $ ./gcu-multi-line-substitution license-header-old license-header-new *.[ch]
  */
 
 /* Note: yes, this script uses GTK+ and GtkSourceView, because
@@ -225,7 +228,7 @@ main (gint   argc,
   if (argc < 4)
     {
       g_printerr ("Usage: %s <search-text-file> <replacement-file> <file1> [file2] ...\n", argv[0]);
-      g_printerr ("WARNING: the script directly modifies the files without doing backups first!\n");
+      g_printerr ("WARNING: the script directly modifies <file1>, [file2], ... without doing backups first!\n");
       return EXIT_FAILURE;
     }
 
