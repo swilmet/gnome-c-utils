@@ -22,6 +22,8 @@
  *
  * Example:
  * $ ./gcu-multi-line-substitution license-header-old license-header-new *.{c,h}
+ *
+ * WARNING: the script directly modifies the files without doing backups first!
  */
 
 /* Note: yes, this script uses GTK+ and GtkSourceView, because
@@ -223,7 +225,7 @@ main (gint   argc,
   if (argc < 4)
     {
       g_printerr ("Usage: %s <search-text-file> <replacement-file> <file1> [file2] ...\n", argv[0]);
-      g_printerr ("WARNING: the script modifies the files!\n");
+      g_printerr ("WARNING: the script directly modifies the files without doing backups first!\n");
       return EXIT_FAILURE;
     }
 

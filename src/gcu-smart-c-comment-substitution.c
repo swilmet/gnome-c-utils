@@ -27,7 +27,8 @@
  * Usage:
  * $ ./gcu-smart-c-comment-substitution <search-text-file> <replacement-file> <file1> [file2] ...
  * <file1>, [file2], etc must be *.c or *.h files.
- * Warning: the script modifies directly <file1>, [file2], etc.
+ * WARNING: the script directly modifies <file1>, [file2], ... without doing
+ * backups first!
  *
  * <search-text-file> should contain a fragment of a C comment. The script
  * canonicalizes its content, to have a list of words to search. When doing the
@@ -635,7 +636,7 @@ main (gint   argc,
   if (argc < 4)
     {
       g_printerr ("Usage: %s <search-text-file> <replacement-file> <file1> [file2] ...\n", argv[0]);
-      g_printerr ("WARNING: the script modifies the files!\n");
+      g_printerr ("WARNING: the script directly modifies <file1>, [file2], ... without doing backups first!\n");
       return EXIT_FAILURE;
     }
 

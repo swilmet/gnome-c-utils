@@ -22,7 +22,7 @@
  * the parenthesis.
  *
  * Usage: gcu-lineup-substitution <search-text> <replacement> <file1> [file2] ...
- * WARNING: the script modifies the files!
+ * WARNING: the script directly modifies the files without doing backups first!
  *
  * Example:
  *
@@ -505,7 +505,7 @@ main (gint   argc,
   if (argc < 4)
     {
       g_printerr ("Usage: %s <search-text> <replacement> <file1> [file2] ...\n", argv[0]);
-      g_printerr ("WARNING: the script modifies the files!\n");
+      g_printerr ("WARNING: the script directly modifies the files without doing backups first!\n");
       return EXIT_FAILURE;
     }
 

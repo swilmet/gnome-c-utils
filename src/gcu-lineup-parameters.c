@@ -22,8 +22,8 @@
  *
  * Usage: gcu-lineup-parameters [file1] [file2] ...
  * If no files are given, stdin is read and the result is printed to stdout.
- * If one or more files are given, their contents are modified (WARNING: no
- * backup is made!).
+ * If one or more files are given, their contents are directly modified
+ * (WARNING: no backup is made first!).
  *
  * The restrictions:
  * - The function name must be at column 0, followed by a space and an opening

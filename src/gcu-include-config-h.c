@@ -20,7 +20,7 @@
 /*
  * Usage:
  * $ gcu-include-config-h <file1.c> [file2.c] ...
- * WARNING: the script modifies the files without doing backups!
+ * WARNING: the script directly modifies the files without doing backups first!
  *
  * Ensures that the files include config.h as follows:
  * #if HAVE_CONFIG_H
@@ -235,7 +235,7 @@ main (int    argc,
   if (argc < 2)
     {
       g_printerr ("Usage: %s <file1.c> [file2.c] ...\n", argv[0]);
-      g_printerr ("WARNING: the script modifies the files without doing backups!\n");
+      g_printerr ("WARNING: the script directly modifies the files without doing backups first!\n");
       return EXIT_FAILURE;
     }
 
