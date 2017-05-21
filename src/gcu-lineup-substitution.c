@@ -134,10 +134,11 @@ sub_free (Sub *sub)
 }
 
 static void
-save_cb (GtefFileSaver *saver,
-         GAsyncResult  *result,
-         Sub           *sub)
+save_cb (GObject      *source_object,
+         GAsyncResult *result,
+         gpointer      user_data)
 {
+  GtefFileSaver *saver = GTEF_FILE_SAVER (source_object);
   GError *error = NULL;
 
   gtef_file_saver_save_finish (saver, result, &error);
@@ -164,8 +165,8 @@ save_file (Sub *sub)
                               NULL,
                               NULL,
                               NULL,
-                              (GAsyncReadyCallback) save_cb,
-                              sub);
+                              save_cb,
+                              NULL);
 }
 
 static void
@@ -459,10 +460,12 @@ do_substitution (Sub *sub)
 }
 
 static void
-load_cb (GtefFileLoader *loader,
-         GAsyncResult   *result,
-         Sub            *sub)
+load_cb (GObject      *source_object,
+         GAsyncResult *result,
+         gpointer      user_data)
 {
+  GtefFileLoader *loader = GTEF_FILE_LOADER (source_object);
+  Sub *sub = user_data;
   GError *error = NULL;
 
   gtef_file_loader_load_finish (loader, result, &error);
@@ -490,7 +493,7 @@ sub_launch (Sub *sub)
                                NULL,
                                NULL,
                                NULL,
-                               (GAsyncReadyCallback) load_cb,
+                               load_cb,
                                sub);
 }
 
