@@ -21,7 +21,8 @@
  * Usage:
  * $ gcu-case-converter (--to-uppercase|-u|--to-camelcase|-c|--to-lowercase|-l) word
  *
- * 'word' can be in upper_case, lower_case or CamelCase.
+ * 'word' can initially be in UPPER_CASE, lower_case or CamelCase, it is
+ * automatically detected.
  * Only one option must be provided.
  * The converted word is printed on stdout.
  * There can be warnings printed on stderr.
