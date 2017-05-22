@@ -21,12 +21,12 @@
  * Does a multi-line substitution (or, multi-line search and replace).
  *
  * Usage:
- * $ ./gcu-multi-line-substitution <search-text-file> <replacement-file> <file1> [file2] ...
+ * $ gcu-multi-line-substitution <search-text-file> <replacement-file> <file1> [file2] ...
  * WARNING: the script directly modifies <file1>, [file2], ... without doing
  * backups first!
  *
  * Example:
- * $ ./gcu-multi-line-substitution license-header-old license-header-new *.[ch]
+ * $ gcu-multi-line-substitution license-header-old license-header-new *.[ch]
  */
 
 /* Note: yes, this script uses GTK+ and GtkSourceView, because

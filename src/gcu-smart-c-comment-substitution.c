@@ -25,7 +25,7 @@
  * are supported, like the comments present in this file.
  *
  * Usage:
- * $ ./gcu-smart-c-comment-substitution <search-text-file> <replacement-file> <file>
+ * $ gcu-smart-c-comment-substitution <search-text-file> <replacement-file> <file>
  * <file> must be a *.c or *.h file.
  * WARNING: the script directly modifies <file> without doing a backup first!
  *
