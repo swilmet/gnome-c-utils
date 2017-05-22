@@ -29,11 +29,13 @@ AX_COMPILER_FLAGS([WARN_CFLAGS], [WARN_LDFLAGS], [yes])
 
 # Dependencies
 AX_REQUIRE_DEFINED([PKG_CHECK_MODULES])
-PKG_CHECK_MODULES([DEP],
+PKG_CHECK_MODULES([GIO_DEPS],
 		  [glib-2.0 >= 2.50
 		   gio-2.0
-		   gio-unix-2.0
-		   gtk+-3.0 >= 3.22
+		   gio-unix-2.0])
+
+PKG_CHECK_MODULES([GTEF_DEPS],
+		  [gtk+-3.0 >= 3.22
 		   gtksourceview-3.0 >= 3.24
 		   gtef-2 >= 2.0])
 
