@@ -20,10 +20,13 @@
 /*
  * Line up parameters of function declarations.
  *
- * Usage: gcu-lineup-parameters [file]
+ * Usage: gcu-lineup-parameters [--tabs|-t] [file]
  * If no files are given, stdin is read and the result is printed to stdout.
  * If 'file' is given, its content is directly modified (WARNING: no backup is
  * made first!).
+ *
+ * By default gcu-lineup-parameters aligns parameters on the parenthesis with
+ * spaces only. With the --tabs option, tabs+spaces will be inserted.
  *
  * The restrictions:
  * - The function name must be at column 0, followed by a space and an opening
@@ -34,10 +37,6 @@
  * - The opening curly brace ("{") of the function must also be at column 0.
  *
  * If one restriction is missing, the function declaration is not modified.
- *
- * The script works with both tabs and spaces. It just sees what is used before
- * doing the line-up, and inserts tabs and/or spaces accordingly. Run the script
- * on tests/gcu-lineup-parameters/sample.c to see the result.
  *
  * Example:
  *
@@ -105,6 +104,21 @@ typedef struct
   guint nb_stars;
   gchar *name;
 } ParameterInfo;
+
+static gboolean _tabs;
+
+static GOptionEntry option_entries[] =
+{
+  { "tabs", 't', 0, G_OPTION_ARG_NONE, &_tabs,
+    "Use tabs to align parameters on the parenthesis.", NULL },
+  { NULL }
+};
+
+static void
+print_usage (char **argv)
+{
+  g_printerr ("Usage: %s [--tabs|-t] [file]\n", argv[0]);
+}
 
 static void
 parameter_info_free (ParameterInfo *param_info)
@@ -339,26 +353,6 @@ print_parameter (GOutputStream *output_stream,
   write_to_output_stream (output_stream, info->name);
 }
 
-static gboolean
-find_tab (gchar **lines,
-          guint   length)
-{
-  guint i;
-
-  for (i = 0; i < length; i++)
-    {
-      gchar *cur_line = lines[i];
-
-      if (cur_line == NULL)
-        return FALSE;
-
-      if (strchr (cur_line, '\t') != NULL)
-        return TRUE;
-    }
-
-  return FALSE;
-}
-
 static void
 print_function_declaration (GOutputStream  *output_stream,
                             gchar         **lines,
@@ -381,7 +375,7 @@ print_function_declaration (GOutputStream  *output_stream,
 
   nb_spaces_to_parenthesis = strlen (function_name) + 2;
 
-  if (find_tab (lines, length))
+  if (_tabs)
     {
       gchar *tabs = g_strnfill (nb_spaces_to_parenthesis / 8, '\t');
       gchar *spaces_after_tabs = g_strnfill (nb_spaces_to_parenthesis % 8, ' ');
@@ -565,29 +559,48 @@ handle_file (GFile *file)
   g_object_unref (output_stream);
 }
 
-gint
-main (gint   argc,
-      gchar *argv[])
+int
+main (int    argc,
+      char **argv)
 {
+  GOptionContext *option_context;
+  GError *error = NULL;
   GFile *file;
+  int ret = EXIT_SUCCESS;
 
   setlocale (LC_ALL, "");
+
+  option_context = g_option_context_new ("- lineup parameters");
+  g_option_context_add_main_entries (option_context, option_entries, NULL);
+  if (!g_option_context_parse (option_context, &argc, &argv, &error))
+    {
+      g_printerr ("Option parsing failed: %s\n", error->message);
+      print_usage (argv);
+      ret = EXIT_FAILURE;
+      goto exit;
+    }
 
   if (argc > 2)
     {
       g_printerr ("Too many arguments.\n");
-      return EXIT_FAILURE;
+      print_usage (argv);
+      ret = EXIT_FAILURE;
+      goto exit;
     }
 
   if (argc == 1)
     {
       handle_stdin ();
-      return EXIT_SUCCESS;
+    }
+  else
+    {
+      file = g_file_new_for_commandline_arg (argv[1]);
+      handle_file (file);
+      g_object_unref (file);
     }
 
-  file = g_file_new_for_commandline_arg (argv[1]);
-  handle_file (file);
-  g_object_unref (file);
-
-  return EXIT_SUCCESS;
+exit:
+  g_option_context_free (option_context);
+  g_clear_error (&error);
+  return ret;
 }
