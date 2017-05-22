@@ -21,12 +21,11 @@
  * Does a multi-line substitution (or, multi-line search and replace).
  *
  * Usage:
- * $ gcu-multi-line-substitution <search-text-file> <replacement-file> <file1> [file2] ...
- * WARNING: the script directly modifies <file1>, [file2], ... without doing
- * backups first!
+ * $ gcu-multi-line-substitution <search-text-file> <replacement-file> <file>
+ * WARNING: the script directly modifies <file> without doing a backup first!
  *
  * Example:
- * $ gcu-multi-line-substitution license-header-old license-header-new *.[ch]
+ * $ ls *.[ch] | parallel gcu-multi-line-substitution license-header-old license-header-new
  */
 
 /* Note: yes, this script uses GTK+ and GtkSourceView, because
@@ -223,41 +222,35 @@ main (gint   argc,
 {
   const gchar *search_text_path;
   const gchar *replacement_path;
+  const gchar *filename;
   gchar *search_text;
   gchar *replacement;
-  gint arg_num;
+  Sub *sub;
 
   setlocale (LC_ALL, "");
 
   gtk_init (NULL, NULL);
 
-  if (argc < 4)
+  if (argc != 4)
     {
-      g_printerr ("Usage: %s <search-text-file> <replacement-file> <file1> [file2] ...\n", argv[0]);
-      g_printerr ("WARNING: the script directly modifies <file1>, [file2], ... without doing backups first!\n");
+      g_printerr ("Usage: %s <search-text-file> <replacement-file> <file>\n", argv[0]);
+      g_printerr ("WARNING: the script directly modifies <file> without doing a backup first!\n");
       return EXIT_FAILURE;
     }
 
   search_text_path = argv[1];
   replacement_path = argv[2];
+  filename = argv[3];
 
   search_text = get_file_contents (search_text_path);
   replacement = get_file_contents (replacement_path);
 
-  /* Launching a GTask for each file would be so boring, let's have some fun
-   * with the GTK main loop!
-   */
-  for (arg_num = 3; arg_num < argc; arg_num++)
-    {
-      const gchar *filename = argv[arg_num];
-      Sub *sub;
+  sub = sub_new (search_text, replacement, filename);
+  sub_launch (sub);
 
-      sub = sub_new (search_text, replacement, filename);
-      sub_launch (sub);
-      gtk_main ();
-      sub_free (sub);
-    }
+  gtk_main ();
 
+  sub_free (sub);
   g_free (search_text);
   g_free (replacement);
 
