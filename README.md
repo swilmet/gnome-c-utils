@@ -17,15 +17,17 @@ Dependencies
 Installation
 ------------
 
+```
 $ ./autogen.sh
 $ make
 [ Become root if necessary ]
 $ make install
+```
 
 Tests/sample files
 ------------------
 
-There are sample files in the tests/ directory.
+There are sample files in the `tests/` directory.
 
 Running the scripts on several files at once
 --------------------------------------------
@@ -71,7 +73,7 @@ frobnitz (Frobnitz  *frobnitz,
 }
 ```
 
-Read the top of gcu-lineup-parameters.c for more details.
+Read the top of `gcu-lineup-parameters.c` for more details.
 
 gcu-lineup-substitution
 -----------------------
@@ -99,14 +101,14 @@ gcu-lineup-substitution can be useful to rename a GObject class, or to change
 the namespace of a group of GObjects, while still keeping a good
 indentation/alignment of the code (in combination with gcu-lineup-parameters).
 
-Read the top of gcu-lineup-substitution.c for more details.
+Read the top of `gcu-lineup-substitution.c` for more details.
 
 gcu-case-converter
 ------------------
 
 Converts a word to `lower_case`, `UPPER_CASE` or `CamelCase`.
 
-Read the top of gcu-case-converter.c for more details.
+Read the top of `gcu-case-converter.c` for more details.
 
 gcu-multi-line-substitution
 ---------------------------
@@ -114,7 +116,7 @@ gcu-multi-line-substitution
 Does a multi-line substitution. Or, in other words, a multi-line search and
 replace.
 
-Read the top of gcu-multi-line-substitution.c for more details.
+Read the top of `gcu-multi-line-substitution.c` for more details.
 
 gcu-smart-c-comment-substitution
 --------------------------------
@@ -123,18 +125,18 @@ Smart substitution (or, search and replace) in C comments. Can be useful to
 change license headers. The script ignores spacing differences and ignores the
 positions of newlines (where a sentence is split).
 
-Read the top of gcu-smart-c-comment-substitution.c for more details.
+Read the top of `gcu-smart-c-comment-substitution.c` for more details.
 
 gcu-check-chain-ups
 -------------------
 
 Basic check of GObject virtual function chain-ups.
 
-Read the top of gcu-check-chain-ups.c for more details.
+Read the top of `gcu-check-chain-ups.c` for more details.
 
 gcu-include-config-h
 --------------------
 
-Ensures that config.h is #included in *.c files.
+Ensures that `config.h` is `#included` in `*.c` files.
 
-Read the top of gcu-include-config-h.c for more details.
+Read the top of `gcu-include-config-h.c` for more details.
