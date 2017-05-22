@@ -25,10 +25,9 @@
  * are supported, like the comments present in this file.
  *
  * Usage:
- * $ ./gcu-smart-c-comment-substitution <search-text-file> <replacement-file> <file1> [file2] ...
- * <file1>, [file2], etc must be *.c or *.h files.
- * WARNING: the script directly modifies <file1>, [file2], ... without doing
- * backups first!
+ * $ ./gcu-smart-c-comment-substitution <search-text-file> <replacement-file> <file>
+ * <file> must be a *.c or *.h file.
+ * WARNING: the script directly modifies <file> without doing a backup first!
  *
  * <search-text-file> should contain a fragment of a C comment. The script
  * canonicalizes its content, to have a list of words to search. When doing the
@@ -630,26 +629,28 @@ main (gint   argc,
 {
   const gchar *search_text_path;
   const gchar *replacement_path;
+  const gchar *filename;
   gchar *full_search_text;
   gchar *full_replacement;
   gchar *search_text = NULL;
   gchar *replacement = NULL;
   GQueue *canonicalized_search_text;
-  gint arg_num;
+  Sub *sub;
 
   setlocale (LC_ALL, "");
 
   gtk_init (NULL, NULL);
 
-  if (argc < 4)
+  if (argc != 4)
     {
-      g_printerr ("Usage: %s <search-text-file> <replacement-file> <file1> [file2] ...\n", argv[0]);
-      g_printerr ("WARNING: the script directly modifies <file1>, [file2], ... without doing backups first!\n");
+      g_printerr ("Usage: %s <search-text-file> <replacement-file> <file>\n", argv[0]);
+      g_printerr ("WARNING: the script directly modifies <file> without doing a backup first!\n");
       return EXIT_FAILURE;
     }
 
   search_text_path = argv[1];
   replacement_path = argv[2];
+  filename = argv[3];
 
   full_search_text = get_file_contents (search_text_path);
   full_replacement = get_file_contents (replacement_path);
@@ -667,22 +668,14 @@ main (gint   argc,
   print_canonicalized_search_text (canonicalized_search_text);
 #endif
 
-  /* Launching a GTask for each file would be so boring, let's have some fun
-   * with the GTK main loop!
-   */
-  for (arg_num = 3; arg_num < argc; arg_num++)
-    {
-      const gchar *filename = argv[arg_num];
-      Sub *sub;
+  g_print ("Processing %s\n", filename);
 
-      g_print ("Processing %s\n", filename);
+  sub = sub_new (canonicalized_search_text, replacement, filename);
+  sub_launch (sub);
 
-      sub = sub_new (canonicalized_search_text, replacement, filename);
-      sub_launch (sub);
-      gtk_main ();
-      sub_free (sub);
-    }
+  gtk_main ();
 
+  sub_free (sub);
   g_free (full_search_text);
   g_free (full_replacement);
   g_free (search_text);
