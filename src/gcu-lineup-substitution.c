@@ -21,8 +21,8 @@
  * Do a substitution and at the same time keep a good alignment of parameters on
  * the parenthesis.
  *
- * Usage: gcu-lineup-substitution <search-text> <replacement> <file1> [file2] ...
- * WARNING: the script directly modifies the files without doing backups first!
+ * Usage: gcu-lineup-substitution <search-text> <replacement> <file>
+ * WARNING: the script directly modifies the file without doing a backup first!
  *
  * Example:
  *
@@ -503,35 +503,28 @@ main (gint   argc,
 {
   const gchar *search_text;
   const gchar *replacement;
-  gint arg_num;
+  const gchar *filename;
+  Sub *sub;
 
   setlocale (LC_ALL, "");
 
   gtk_init (NULL, NULL);
 
-  if (argc < 4)
+  if (argc != 4)
     {
-      g_printerr ("Usage: %s <search-text> <replacement> <file1> [file2] ...\n", argv[0]);
-      g_printerr ("WARNING: the script directly modifies the files without doing backups first!\n");
+      g_printerr ("Usage: %s <search-text> <replacement> <file>\n", argv[0]);
+      g_printerr ("WARNING: the script directly modifies the file without doing a backup first!\n");
       return EXIT_FAILURE;
     }
 
   search_text = argv[1];
   replacement = argv[2];
+  filename = argv[3];
 
-  /* Launching a GTask for each file would be so boring, let's have some fun
-   * with the GTK main loop!
-   */
-  for (arg_num = 3; arg_num < argc; arg_num++)
-    {
-      const gchar *filename = argv[arg_num];
-      Sub *sub;
-
-      sub = sub_new (search_text, replacement, filename);
-      sub_launch (sub);
-      gtk_main ();
-      sub_free (sub);
-    }
+  sub = sub_new (search_text, replacement, filename);
+  sub_launch (sub);
+  gtk_main ();
+  sub_free (sub);
 
   return EXIT_SUCCESS;
 }
