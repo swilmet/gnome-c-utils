@@ -19,10 +19,10 @@
 
 /*
  * Usage:
- * $ gcu-include-config-h <file1.c> [file2.c] ...
- * WARNING: the script directly modifies the files without doing backups first!
+ * $ gcu-include-config-h <file.c>
+ * WARNING: the script directly modifies the file without doing a backup first!
  *
- * Ensures that the files include config.h as follows:
+ * Ensures that the file includes config.h as follows:
  * #if HAVE_CONFIG_H
  * #include <config.h>
  * #endif
@@ -227,26 +227,21 @@ int
 main (int    argc,
       char **argv)
 {
-  gint arg_num;
+  GFile *location;
 
   setlocale (LC_ALL, "");
   gtk_init (NULL, NULL);
 
-  if (argc < 2)
+  if (argc != 2)
     {
-      g_printerr ("Usage: %s <file1.c> [file2.c] ...\n", argv[0]);
-      g_printerr ("WARNING: the script directly modifies the files without doing backups first!\n");
+      g_printerr ("Usage: %s <file.c>\n", argv[0]);
+      g_printerr ("WARNING: the script directly modifies the file without doing a backup first!\n");
       return EXIT_FAILURE;
     }
 
-  for (arg_num = 1; arg_num < argc; arg_num++)
-    {
-      GFile *location;
-
-      location = g_file_new_for_commandline_arg (argv[arg_num]);
-      handle_location (location);
-      g_object_unref (location);
-    }
+  location = g_file_new_for_commandline_arg (argv[1]);
+  handle_location (location);
+  g_object_unref (location);
 
   return EXIT_SUCCESS;
 }
