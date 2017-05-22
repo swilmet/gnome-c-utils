@@ -35,6 +35,38 @@
 #include <stdlib.h>
 #include <locale.h>
 
+static void
+save_file_cb (GObject      *source_object,
+              GAsyncResult *result,
+              gpointer      user_data)
+{
+  GtefFileSaver *saver = GTEF_FILE_SAVER (source_object);
+  GError *error = NULL;
+
+  gtef_file_saver_save_finish (saver, result, &error);
+  g_object_unref (saver);
+  g_assert_no_error (error);
+
+  gtk_main_quit ();
+}
+
+static void
+save_file (GtefBuffer *buffer)
+{
+  GtefFile *file;
+  GtefFileSaver *saver;
+
+  file = gtef_buffer_get_file (buffer);
+  saver = gtef_file_saver_new (buffer, file);
+
+  gtef_file_saver_save_async (saver,
+                              G_PRIORITY_DEFAULT,
+                              NULL,
+                              NULL, NULL, NULL,
+                              save_file_cb,
+                              NULL);
+}
+
 static gboolean
 find_include_config (GtkSourceBuffer *buffer,
                      GtkTextIter     *match_start,
@@ -147,11 +179,16 @@ load_file_cb (GObject      *source_object,
               gpointer      user_data)
 {
   GtefFileLoader *loader = GTEF_FILE_LOADER (source_object);
+  GtefBuffer *buffer = GTEF_BUFFER (user_data);
   GError *error = NULL;
 
   gtef_file_loader_load_finish (loader, result, &error);
+  g_object_unref (loader);
   g_assert_no_error (error);
-  gtk_main_quit ();
+
+  remove_existing_include_config (buffer);
+  insert_include_config (buffer);
+  save_file (buffer);
 }
 
 static void
@@ -168,59 +205,7 @@ load_file (GtefBuffer *buffer)
                                NULL,
                                NULL, NULL, NULL,
                                load_file_cb,
-                               NULL);
-  gtk_main ();
-  g_object_unref (loader);
-}
-
-static void
-save_file_cb (GObject      *source_object,
-              GAsyncResult *result,
-              gpointer      user_data)
-{
-  GtefFileSaver *saver = GTEF_FILE_SAVER (source_object);
-  GError *error = NULL;
-
-  gtef_file_saver_save_finish (saver, result, &error);
-  g_assert_no_error (error);
-  gtk_main_quit ();
-}
-
-static void
-save_file (GtefBuffer *buffer)
-{
-  GtefFile *file;
-  GtefFileSaver *saver;
-
-  file = gtef_buffer_get_file (buffer);
-  saver = gtef_file_saver_new (buffer, file);
-
-  gtef_file_saver_save_async (saver,
-                              G_PRIORITY_DEFAULT,
-                              NULL,
-                              NULL, NULL, NULL,
-                              save_file_cb,
-                              NULL);
-  gtk_main ();
-  g_object_unref (saver);
-}
-
-static void
-handle_location (GFile *location)
-{
-  GtefBuffer *buffer;
-  GtefFile *file;
-
-  buffer = gtef_buffer_new ();
-  file = gtef_buffer_get_file (buffer);
-  gtef_file_set_location (file, location);
-
-  load_file (buffer);
-  remove_existing_include_config (buffer);
-  insert_include_config (buffer);
-  save_file (buffer);
-
-  g_object_unref (buffer);
+                               buffer);
 }
 
 int
@@ -228,6 +213,8 @@ main (int    argc,
       char **argv)
 {
   GFile *location;
+  GtefBuffer *buffer;
+  GtefFile *file;
 
   setlocale (LC_ALL, "");
   gtk_init (NULL, NULL);
@@ -240,8 +227,17 @@ main (int    argc,
     }
 
   location = g_file_new_for_commandline_arg (argv[1]);
-  handle_location (location);
+
+  buffer = gtef_buffer_new ();
+  file = gtef_buffer_get_file (buffer);
+  gtef_file_set_location (file, location);
+
+  load_file (buffer);
+
+  gtk_main ();
+
   g_object_unref (location);
+  g_object_unref (buffer);
 
   return EXIT_SUCCESS;
 }
