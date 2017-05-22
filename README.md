@@ -6,6 +6,14 @@ Various utilities, useful when programming with
 
 Some scripts are more general and can be useful for other tasks.
 
+Dependencies
+------------
+
+- GLib
+- GTK+
+- GtkSourceView
+- [Gtef](https://wiki.gnome.org/Projects/Gtef)
+
 Installation
 ------------
 
@@ -18,6 +26,21 @@ Tests/sample files
 ------------------
 
 There are sample files in the tests/ directory.
+
+Running the scripts on several files at once
+--------------------------------------------
+
+It is recommended to use e.g.
+[GNU Parallel](https://www.gnu.org/software/parallel/) to run the scripts on
+several files at once. It was possible at some point to directly pass several
+file arguments to some gcu scripts, but this possibility has been removed in
+most of the scripts to simplify the code, and with GNU Parallel it is anyway
+almost as convenient to use, with the benefit that it runs in parallel.
+
+For example:
+```
+$ find . -name "*.c" | parallel gcu-include-config-h
+```
 
 gcu-lineup-parameters
 ---------------------
