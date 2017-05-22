@@ -1,7 +1,7 @@
 /*
  * This file is part of gnome-c-utils.
  *
- * Copyright © 2016 Sébastien Wilmet <swilmet@gnome.org>
+ * Copyright © 2016, 2017 Sébastien Wilmet <swilmet@gnome.org>
  *
  * gnome-c-utils is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,7 @@
 /*
  * Basic check of GObject virtual function chain-ups.
  *
- * Usage: gcu-check-chain-ups <file1.c> [file2.c] ...
+ * Usage: gcu-check-chain-ups <file.c>
  *
  * For a less verbose output, redirect stdout to /dev/null. The warnings/errors
  * are printed on stderr.
@@ -210,34 +210,29 @@ gint
 main (gint   argc,
       gchar *argv[])
 {
-  gint arg_num;
+  const gchar *path;
+  GFile *file;
+  GtkSourceBuffer *buffer;
+  gchar *basename;
 
   gtk_init (NULL, NULL);
 
-  if (argc < 2)
+  if (argc != 2)
     {
-      g_printerr ("Usage: %s <file1.c> [file2.c] ...\n", argv[0]);
+      g_printerr ("Usage: %s <file.c>\n", argv[0]);
       return EXIT_FAILURE;
     }
 
-  for (arg_num = 1; arg_num < argc; arg_num++)
-    {
-      const gchar *path;
-      GFile *file;
-      GtkSourceBuffer *buffer;
-      gchar *basename;
+  path = argv[1];
+  file = g_file_new_for_path (path);
+  basename = g_file_get_basename (file);
 
-      path = argv[arg_num];
-      file = g_file_new_for_path (path);
-      basename = g_file_get_basename (file);
+  buffer = open_file (file);
+  check_buffer (buffer, basename);
 
-      buffer = open_file (file);
-      check_buffer (buffer, basename);
-
-      g_object_unref (file);
-      g_object_unref (buffer);
-      g_free (basename);
-    }
+  g_object_unref (file);
+  g_object_unref (buffer);
+  g_free (basename);
 
   return EXIT_SUCCESS;
 }
