@@ -12,7 +12,7 @@ Dependencies
 - GLib
 - GTK+
 - GtkSourceView
-- [Gtef](https://wiki.gnome.org/Projects/Gtef)
+- [Tepl](https://wiki.gnome.org/Projects/Tepl)
 
 Installation
 ------------

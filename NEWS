@@ -7,7 +7,7 @@ GNOME 3.26, September 2017
 * For the scripts that modify files, remove the possibility to pass several
   files at once, the scripts now take only one file argument. GNU Parallel is
   now recommended to launch the same command on several files.
-* For scripts already depending on GtkSourceView, use Gtef for file loading and
+* For scripts already depending on GtkSourceView, use Tepl for file loading and
   saving.
 * gcu-lineup-parameters: do not insert tabs vs spaces dynamically by looking at
   the initial content (it was a bad idea), now spaces are inserted by default

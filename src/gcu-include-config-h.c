@@ -31,7 +31,7 @@
  * snippet. The snippet is always inserted as the first #include.
  */
 
-#include <gtef/gtef.h>
+#include <tepl/tepl.h>
 #include <stdlib.h>
 #include <locale.h>
 
@@ -40,10 +40,10 @@ save_file_cb (GObject      *source_object,
               GAsyncResult *result,
               gpointer      user_data)
 {
-  GtefFileSaver *saver = GTEF_FILE_SAVER (source_object);
+  TeplFileSaver *saver = TEPL_FILE_SAVER (source_object);
   GError *error = NULL;
 
-  gtef_file_saver_save_finish (saver, result, &error);
+  tepl_file_saver_save_finish (saver, result, &error);
   g_object_unref (saver);
   g_assert_no_error (error);
 
@@ -51,15 +51,15 @@ save_file_cb (GObject      *source_object,
 }
 
 static void
-save_file (GtefBuffer *buffer)
+save_file (TeplBuffer *buffer)
 {
-  GtefFile *file;
-  GtefFileSaver *saver;
+  TeplFile *file;
+  TeplFileSaver *saver;
 
-  file = gtef_buffer_get_file (buffer);
-  saver = gtef_file_saver_new (buffer, file);
+  file = tepl_buffer_get_file (buffer);
+  saver = tepl_file_saver_new (buffer, file);
 
-  gtef_file_saver_save_async (saver,
+  tepl_file_saver_save_async (saver,
                               G_PRIORITY_DEFAULT,
                               NULL,
                               NULL, NULL, NULL,
@@ -105,7 +105,7 @@ find_include_config (GtkSourceBuffer *buffer,
 }
 
 static void
-remove_existing_include_config (GtefBuffer *buffer)
+remove_existing_include_config (TeplBuffer *buffer)
 {
   GtkTextIter match_start;
   GtkTextIter match_end;
@@ -148,18 +148,18 @@ find_first_include (GtkSourceBuffer *buffer,
 }
 
 static void
-insert_include_config (GtefBuffer *buffer)
+insert_include_config (TeplBuffer *buffer)
 {
   GtkTextIter pos;
 
   if (!find_first_include (GTK_SOURCE_BUFFER (buffer), &pos))
     {
-      GtefFile *file;
+      TeplFile *file;
       gchar *filename;
 
       /* I don't know where to insert the #include. */
-      file = gtef_buffer_get_file (buffer);
-      filename = g_file_get_parse_name (gtef_file_get_location (file));
+      file = tepl_buffer_get_file (buffer);
+      filename = g_file_get_parse_name (tepl_file_get_location (file));
       g_warning ("%s: first #include not found.", filename);
       g_free (filename);
       return;
@@ -178,11 +178,11 @@ load_file_cb (GObject      *source_object,
               GAsyncResult *result,
               gpointer      user_data)
 {
-  GtefFileLoader *loader = GTEF_FILE_LOADER (source_object);
-  GtefBuffer *buffer = GTEF_BUFFER (user_data);
+  TeplFileLoader *loader = TEPL_FILE_LOADER (source_object);
+  TeplBuffer *buffer = TEPL_BUFFER (user_data);
   GError *error = NULL;
 
-  gtef_file_loader_load_finish (loader, result, &error);
+  tepl_file_loader_load_finish (loader, result, &error);
   g_object_unref (loader);
   g_assert_no_error (error);
 
@@ -192,15 +192,15 @@ load_file_cb (GObject      *source_object,
 }
 
 static void
-load_file (GtefBuffer *buffer)
+load_file (TeplBuffer *buffer)
 {
-  GtefFile *file;
-  GtefFileLoader *loader;
+  TeplFile *file;
+  TeplFileLoader *loader;
 
-  file = gtef_buffer_get_file (buffer);
-  loader = gtef_file_loader_new (buffer, file);
+  file = tepl_buffer_get_file (buffer);
+  loader = tepl_file_loader_new (buffer, file);
 
-  gtef_file_loader_load_async (loader,
+  tepl_file_loader_load_async (loader,
                                G_PRIORITY_DEFAULT,
                                NULL,
                                NULL, NULL, NULL,
@@ -213,8 +213,8 @@ main (int    argc,
       char **argv)
 {
   GFile *location;
-  GtefBuffer *buffer;
-  GtefFile *file;
+  TeplBuffer *buffer;
+  TeplFile *file;
 
   setlocale (LC_ALL, "");
   gtk_init (NULL, NULL);
@@ -228,9 +228,9 @@ main (int    argc,
 
   location = g_file_new_for_commandline_arg (argv[1]);
 
-  buffer = gtef_buffer_new ();
-  file = gtef_buffer_get_file (buffer);
-  gtef_file_set_location (file, location);
+  buffer = tepl_buffer_new ();
+  file = tepl_buffer_get_file (buffer);
+  tepl_file_set_location (file, location);
 
   load_file (buffer);
 

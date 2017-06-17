@@ -69,7 +69,7 @@
  * for me to write the code. And in the future, this code might be useful for a
  * graphical text editor based on GtkSourceView.
  */
-#include <gtef/gtef.h>
+#include <tepl/tepl.h>
 #include <stdlib.h>
 #include <locale.h>
 
@@ -79,7 +79,7 @@ struct _Sub
   gchar *search_text;
   gchar *replacement;
 
-  GtefBuffer *buffer;
+  TeplBuffer *buffer;
 
   /* Used to call gtk_source_view_get_visual_column(), so tabs are supported for
    * free.
@@ -94,7 +94,7 @@ sub_new (const gchar *search_text,
 {
   Sub *sub = g_new0 (Sub, 1);
   GFile *location;
-  GtefFile *file;
+  TeplFile *file;
 
   g_assert (search_text != NULL);
   g_assert (search_text[0] != '\0');
@@ -105,12 +105,12 @@ sub_new (const gchar *search_text,
   sub->search_text = g_strdup (search_text);
   sub->replacement = g_strdup (replacement);
 
-  sub->buffer = gtef_buffer_new ();
+  sub->buffer = tepl_buffer_new ();
   gtk_source_buffer_set_implicit_trailing_newline (GTK_SOURCE_BUFFER (sub->buffer), FALSE);
 
   location = g_file_new_for_commandline_arg (filename);
-  file = gtef_buffer_get_file (sub->buffer);
-  gtef_file_set_location (file, location);
+  file = tepl_buffer_get_file (sub->buffer);
+  tepl_file_set_location (file, location);
   g_object_unref (location);
 
   sub->view = GTK_SOURCE_VIEW (gtk_source_view_new_with_buffer (GTK_SOURCE_BUFFER (sub->buffer)));
@@ -138,10 +138,10 @@ save_cb (GObject      *source_object,
          GAsyncResult *result,
          gpointer      user_data)
 {
-  GtefFileSaver *saver = GTEF_FILE_SAVER (source_object);
+  TeplFileSaver *saver = TEPL_FILE_SAVER (source_object);
   GError *error = NULL;
 
-  gtef_file_saver_save_finish (saver, result, &error);
+  tepl_file_saver_save_finish (saver, result, &error);
   g_object_unref (saver);
 
   if (error != NULL)
@@ -153,13 +153,13 @@ save_cb (GObject      *source_object,
 static void
 save_file (Sub *sub)
 {
-  GtefFile *file;
-  GtefFileSaver *saver;
+  TeplFile *file;
+  TeplFileSaver *saver;
 
-  file = gtef_buffer_get_file (sub->buffer);
-  saver = gtef_file_saver_new (sub->buffer, file);
+  file = tepl_buffer_get_file (sub->buffer);
+  saver = tepl_file_saver_new (sub->buffer, file);
 
-  gtef_file_saver_save_async (saver,
+  tepl_file_saver_save_async (saver,
                               G_PRIORITY_HIGH,
                               NULL,
                               NULL,
@@ -464,11 +464,11 @@ load_cb (GObject      *source_object,
          GAsyncResult *result,
          gpointer      user_data)
 {
-  GtefFileLoader *loader = GTEF_FILE_LOADER (source_object);
+  TeplFileLoader *loader = TEPL_FILE_LOADER (source_object);
   Sub *sub = user_data;
   GError *error = NULL;
 
-  gtef_file_loader_load_finish (loader, result, &error);
+  tepl_file_loader_load_finish (loader, result, &error);
   g_object_unref (loader);
 
   if (error != NULL)
@@ -481,13 +481,13 @@ load_cb (GObject      *source_object,
 static void
 sub_launch (Sub *sub)
 {
-  GtefFile *file;
-  GtefFileLoader *loader;
+  TeplFile *file;
+  TeplFileLoader *loader;
 
-  file = gtef_buffer_get_file (sub->buffer);
-  loader = gtef_file_loader_new (sub->buffer, file);
+  file = tepl_buffer_get_file (sub->buffer);
+  loader = tepl_file_loader_new (sub->buffer, file);
 
-  gtef_file_loader_load_async (loader,
+  tepl_file_loader_load_async (loader,
                                G_PRIORITY_HIGH,
                                NULL,
                                NULL,
