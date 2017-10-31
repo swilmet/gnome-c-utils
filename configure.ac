@@ -36,8 +36,8 @@ PKG_CHECK_MODULES([GIO_DEPS],
 
 PKG_CHECK_MODULES([TEPL_DEPS],
 		  [gtk+-3.0 >= 3.22
-		   gtksourceview-3.0 >= 3.24
-		   tepl-3 >= 2.99.1])
+		   gtksourceview-4 >= 3.99.6
+		   tepl-4 >= 3.99.0])
 
 # Output files
 AC_CONFIG_FILES([

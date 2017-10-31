@@ -142,19 +142,19 @@ do_substitution (Sub *sub)
 
   gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (sub->buffer), &iter);
 
-  while (gtk_source_search_context_forward2 (search_context,
-                                             &iter,
-                                             &match_start,
-                                             &match_end,
-                                             NULL))
+  while (gtk_source_search_context_forward (search_context,
+                                            &iter,
+                                            &match_start,
+                                            &match_end,
+                                            NULL))
     {
       GError *error = NULL;
 
-      gtk_source_search_context_replace2 (search_context,
-                                          &match_start,
-                                          &match_end,
-                                          sub->replacement, -1,
-                                          &error);
+      gtk_source_search_context_replace (search_context,
+                                         &match_start,
+                                         &match_end,
+                                         sub->replacement, -1,
+                                         &error);
 
       if (error != NULL)
         g_error ("Error when doing the substitution: %s", error->message);

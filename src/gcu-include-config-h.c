@@ -92,11 +92,11 @@ find_include_config (GtkSourceBuffer *buffer,
 
   gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (buffer), &start);
 
-  found = gtk_source_search_context_forward2 (search_context,
-                                              &start,
-                                              match_start,
-                                              match_end,
-                                              NULL);
+  found = gtk_source_search_context_forward (search_context,
+                                             &start,
+                                             match_start,
+                                             match_end,
+                                             NULL);
 
   g_object_unref (search_settings);
   g_object_unref (search_context);
@@ -135,11 +135,11 @@ find_first_include (GtkSourceBuffer *buffer,
 
   gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (buffer), &start);
 
-  found = gtk_source_search_context_forward2 (search_context,
-                                              &start,
-                                              iter,
-                                              NULL,
-                                              NULL);
+  found = gtk_source_search_context_forward (search_context,
+                                             &start,
+                                             iter,
+                                             NULL,
+                                             NULL);
 
   g_object_unref (search_settings);
   g_object_unref (search_context);

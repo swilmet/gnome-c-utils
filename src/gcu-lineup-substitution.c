@@ -415,11 +415,11 @@ replace (Sub                    *sub,
   parentheses_columns = get_parentheses_columns (sub, match_end);
 
   start = *match_start;
-  gtk_source_search_context_replace2 (search_context,
-                                      &start,
-                                      match_end,
-                                      sub->replacement, -1,
-                                      &error);
+  gtk_source_search_context_replace (search_context,
+                                     &start,
+                                     match_end,
+                                     sub->replacement, -1,
+                                     &error);
 
   if (error != NULL)
     g_error ("Error when doing the substitution: %s", error->message);
@@ -445,11 +445,11 @@ do_substitution (Sub *sub)
 
   gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (sub->buffer), &iter);
 
-  while (gtk_source_search_context_forward2 (search_context,
-                                             &iter,
-                                             &match_start,
-                                             &match_end,
-                                             NULL))
+  while (gtk_source_search_context_forward (search_context,
+                                            &iter,
+                                            &match_start,
+                                            &match_end,
+                                            NULL))
     {
       replace (sub, search_context, &match_start, &match_end);
       iter = match_end;

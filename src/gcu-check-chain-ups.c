@@ -192,11 +192,11 @@ check_buffer (GtkSourceBuffer *buffer,
 
   gtk_text_buffer_get_start_iter (GTK_TEXT_BUFFER (buffer), &iter);
 
-  while (gtk_source_search_context_forward2 (search_context,
-                                             &iter,
-                                             NULL,
-                                             &match_end,
-                                             NULL))
+  while (gtk_source_search_context_forward (search_context,
+                                            &iter,
+                                            NULL,
+                                            &match_end,
+                                            NULL))
     {
       check_chain_up (buffer, &match_end, basename);
       iter = match_end;
