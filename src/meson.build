@@ -1,1 +1,3 @@
-executable('gcu-case-converter', 'gcu-case-converter.c')
+executable('gcu-case-converter',
+	   'gcu-case-converter.c',
+	   install : true)
