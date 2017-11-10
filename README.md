@@ -2,7 +2,7 @@ gnome-c-utils
 =============
 
 Various utilities, useful when programming with
-[GLib/GTK+](https://www.gtk.org/), with the C language.
+[GLib/GTK+](https://www.gtk.org/) in C.
 
 Some scripts are more general and can be useful for other tasks.
 
@@ -18,10 +18,11 @@ Installation
 ------------
 
 ```
-$ ./autogen.sh
-$ make
+$ cd build/
+$ meson
+$ ninja
 [ Become root if necessary ]
-$ make install
+$ ninja install
 ```
 
 Tests/sample files
@@ -34,14 +35,14 @@ Running the scripts on several files at once
 
 It is recommended to use e.g.
 [GNU Parallel](https://www.gnu.org/software/parallel/) to run the scripts on
-several files at once. It was possible at some point to directly pass several
-file arguments to some gcu scripts, but this possibility has been removed to
-simplify the code, and with GNU Parallel it is anyway almost as convenient to
-use, with the benefit that it runs in parallel.
+several files at once. In a previous version of gnome-c-utils it was possible
+to directly pass several file arguments to some gcu scripts, but this
+possibility has been removed to simplify the code, and with GNU Parallel it is
+anyway almost as convenient to use, with the benefit that it runs in parallel.
 
 For example:
 ```
-$ find . -name "*.c" | parallel gcu-include-config-h
+$ find . -name "*.c" | parallel gcu-lineup-parameters
 ```
 
 gcu-lineup-parameters
