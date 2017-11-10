@@ -1,4 +1,5 @@
-project('gnome-c-utils', 'c')
+project('gnome-c-utils', 'c',
+	meson_version : '>= 0.43')
 
 gio_deps = [
 	dependency('glib-2.0', version : '>= 2.50'),
