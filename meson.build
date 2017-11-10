@@ -16,4 +16,48 @@ tepl_deps = [
 add_global_arguments('-DG_LOG_DOMAIN="@0@"'.format(meson.project_name()),
 		     language : 'c')
 
+#####
+# CFLAGS
+# (This is the ugly part of Meson, currently.)
+# The same as the AX_COMPILER_FLAGS Autotools macro.
+
+cflags_list = [
+	'-fno-strict-aliasing',
+	'-Wcast-align',
+	'-Wdeclaration-after-statement',
+	'-Wformat-nonliteral',
+	'-Wformat=2',
+	'-Winit-self',
+	'-Winline',
+	'-Wmissing-declarations',
+	'-Wmissing-format-attribute',
+	'-Wmissing-include-dirs',
+	'-Wmissing-noreturn',
+	'-Wmissing-prototypes',
+	'-Wnested-externs',
+	'-Wno-error=missing-field-initializers',
+	'-Wno-error=unused-parameter',
+	'-Wno-missing-field-initializers',
+	'-Wno-unused-parameter',
+	'-Wold-style-definition',
+	'-Wpacked',
+	'-Wpointer-arith',
+	'-Wredundant-decls',
+	'-Wshadow',
+	'-Wstrict-prototypes',
+	'-Wswitch-enum',
+	'-Wundef',
+	'-Wunused-but-set-variable',
+	'-Wwrite-strings'
+]
+
+c_compiler = meson.get_compiler('c')
+
+foreach cflag : cflags_list
+	if c_compiler.has_argument(cflag)
+		add_global_arguments(cflag, language : 'c')
+	endif
+endforeach
+##### end CFLAGS
+
 subdir('src')
