@@ -12,4 +12,7 @@ tepl_deps = [
 	dependency('tepl-4', version : '>= 3.99.0')
 ]
 
+add_global_arguments('-DG_LOG_DOMAIN="@0@"'.format(meson.project_name()),
+		     language : 'c')
+
 subdir('src')
