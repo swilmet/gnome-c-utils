@@ -21,7 +21,7 @@ add_global_arguments('-DG_LOG_DOMAIN="@0@"'.format(meson.project_name()),
 # (This is the ugly part of Meson, currently.)
 # The same as the AX_COMPILER_FLAGS Autotools macro.
 
-cflags_list = [
+warning_cflags = [
 	'-fno-strict-aliasing',
 	'-Wcast-align',
 	'-Wdeclaration-after-statement',
@@ -52,12 +52,8 @@ cflags_list = [
 ]
 
 c_compiler = meson.get_compiler('c')
-
-foreach cflag : cflags_list
-	if c_compiler.has_argument(cflag)
-		add_global_arguments(cflag, language : 'c')
-	endif
-endforeach
+supported_warning_cflags = c_compiler.get_supported_arguments(warning_cflags)
+add_global_arguments(supported_warning_cflags, language : 'c')
 ##### end CFLAGS
 
 subdir('src')
