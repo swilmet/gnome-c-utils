@@ -23,6 +23,6 @@ endforeach
 foreach prog : programs_depending_on_tepl
 	executable(prog[0],
 		   prog[1],
-		   dependencies : tepl_deps,
+		   dependencies : [gio_deps, tepl_deps],
 		   install : true)
 endforeach
