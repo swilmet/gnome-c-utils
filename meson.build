@@ -1,7 +1,12 @@
+# Convention:
+# - Local variables in lower_case.
+# - Global variables in UPPER_CASE.
+# See: https://github.com/mesonbuild/meson/issues/2607
+
 project('gnome-c-utils', 'c',
 	meson_version : '>= 0.43')
 
-gio_deps = [
+GIO_DEPS = [
 	dependency('glib-2.0', version : '>= 2.50'),
 	dependency('gio-2.0'),
 	dependency('gio-unix-2.0')
@@ -9,27 +14,27 @@ gio_deps = [
 
 # The Tepl dependencies are optional, since it can be difficult to install all
 # of them.
-tepl_deps = [
+TEPL_DEPS = [
 	dependency('gtk+-3.0',		version : '>= 3.22',	required : false),
 	dependency('gtksourceview-4',	version : '>= 3.99.6',	required : false),
 	dependency('tepl-4',		version : '>= 3.99.0',	required : false)
 ]
 
-# If you know a better way to compute all_tepl_deps_found, contribution
+# If you know a better way to compute ALL_TEPL_DEPS_FOUND, contribution
 # welcome.
 tepl_deps_found = []
-foreach tepl_dep : tepl_deps
+foreach tepl_dep : TEPL_DEPS
 	tepl_deps_found += tepl_dep.found()
 endforeach
 
-all_tepl_deps_found = not (tepl_deps_found.contains(false))
+ALL_TEPL_DEPS_FOUND = not (tepl_deps_found.contains(false))
 
 add_global_arguments('-DG_LOG_DOMAIN="@0@"'.format(meson.project_name()),
 		     language : 'c')
 
 #####
 # CFLAGS
-# (This is the ugly part of Meson, currently.)
+# (This is one of the ugly parts of Meson, currently.)
 # The same as the AX_COMPILER_FLAGS Autotools macro.
 
 warning_cflags = [
@@ -87,5 +92,5 @@ subdir('src')
 # Print a summary of the configuration
 output = 'Configuration:\n'
 output += '    Build programs depending on GIO:  true\n'
-output += '    Build programs depending on Tepl: @0@'.format(all_tepl_deps_found)
+output += '    Build programs depending on Tepl: @0@'.format(ALL_TEPL_DEPS_FOUND)
 message(output)
