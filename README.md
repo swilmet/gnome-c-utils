@@ -9,10 +9,16 @@ Some scripts are more general and can be useful for other tasks.
 Dependencies
 ------------
 
-- GLib
+Required:
+- GLib/GIO
+
+Optional:
 - GTK+
 - GtkSourceView
 - [Tepl](https://wiki.gnome.org/Projects/Tepl)
+
+If the optional dependencies are not found, the programs depending on them
+won't be built.
 
 Installation
 ------------
