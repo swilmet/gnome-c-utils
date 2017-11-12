@@ -5,6 +5,8 @@
 # "${old_namespace_upper}_IS_${old_classname_upper}"
 # "${old_namespace_upper}_TYPE_${old_classname_upper}"
 #
+# - Call gcu-lineup-parameters on the file if it is a *.c file.
+#
 # - Take input arguments from the command line, check the args, print usage,
 #   rename the script to gcu-gobject-renamer and install it.
 
