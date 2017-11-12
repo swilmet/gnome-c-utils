@@ -20,14 +20,12 @@ TEPL_DEPS = [
 	dependency('tepl-4',		version : '>= 3.99.0',	required : false)
 ]
 
-# If you know a better way to compute ALL_TEPL_DEPS_FOUND, contribution
-# welcome.
-tepl_deps_found = []
+ALL_TEPL_DEPS_FOUND = true
 foreach tepl_dep : TEPL_DEPS
-	tepl_deps_found += tepl_dep.found()
+	if not tepl_dep.found()
+		ALL_TEPL_DEPS_FOUND = false
+	endif
 endforeach
-
-ALL_TEPL_DEPS_FOUND = not (tepl_deps_found.contains(false))
 
 add_global_arguments('-DG_LOG_DOMAIN="@0@"'.format(meson.project_name()),
 		     language : 'c')
