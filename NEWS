@@ -3,6 +3,7 @@ GNOME 3.28, March 2018
 * Build system: use Meson instead of the Autotools.
 * Port to GtkSourceView 4 and Tepl 4.
 * New script: basic gobject-renamer.sh.
+* New script: gcu-align-params-on-parenthesis.
 
 GNOME 3.26, September 2017
 --------------------------
