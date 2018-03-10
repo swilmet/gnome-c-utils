@@ -110,6 +110,22 @@ indentation/alignment of the code (in combination with gcu-lineup-parameters).
 
 Read the top of `gcu-lineup-substitution.c` for more details.
 
+gcu-align-params-on-parenthesis
+-------------------------------
+
+Align parameters on the opening parenthesis, made to be integrated in a text
+editor.
+
+Example:
+
+```
+function_call (param1,
+               param2,
+               param3);
+```
+
+Read the top of `gcu-align-params-on-parenthesis.c` for more details.
+
 gcu-case-converter
 ------------------
 

@@ -17,7 +17,33 @@
  * along with gnome-c-utils.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-/* Vim config:
+/*
+ * Align parameters on the opening parenthesis, made to be integrated in a text
+ * editor.
+ *
+ * For example:
+ * function_call (param1,
+ *                param2,
+ *                param3);
+ *
+ * Reads stdin and writes the result to stdout. The first line must be the line
+ * containing the opening parenthesis. The following lines will be aligned
+ * according to the first line. As such, the script doesn't work on whole files,
+ * only one function call must be given to stdin.
+ */
+
+/*
+ * Use with Vim:
+ *
+ * For some programming languages the = command works fine: you select the lines
+ * with V, and press =. But for other languages, the = command doesn't always
+ * work well (for example it removes the indentation). I personally use the =
+ * command only to align parameters on the parenthesis, so the purpose of
+ * gcu-align-params-on-parenthesis is to provide that functionality in Vim for
+ * languages where = is broken (gcu-align-params-on-parenthesis does only one
+ * thing, but (hopefully) does it well).
+ *
+ * Add to your vimrc:
  *
  * function! AlignParamsOnParenthesis()
  *         execute "normal :'<,'>!gcu-align-params-on-parenthesis\<CR>"
@@ -27,7 +53,8 @@
  *         map = :call AlignParamsOnParenthesis()<CR>
  * endfunction
  *
- * call MapAlignParamsOnParenthesis()
+ * " For example for the Meson build system:
+ * autocmd Filetype meson call MapAlignParamsOnParenthesis()
  */
 
 #include <gio/gio.h>
