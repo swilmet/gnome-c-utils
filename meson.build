@@ -16,7 +16,7 @@ GIO_DEPS = [
 # of them.
 TEPL_DEPS = [
 	dependency('gtk+-3.0',		version : '>= 3.22',	required : false),
-	dependency('gtksourceview-4',	version : '>= 3.99.6',	required : false),
+	dependency('gtksourceview-4',	version : '>= 4.0',	required : false),
 	dependency('tepl-4',		version : '>= 3.99.0',	required : false)
 ]
 
