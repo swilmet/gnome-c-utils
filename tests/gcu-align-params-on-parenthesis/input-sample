@@ -1,0 +1,4 @@
+        executable(prog[0],
+                 prog[1],
+                     dependencies : GIO_DEPS,
+                   install : true)

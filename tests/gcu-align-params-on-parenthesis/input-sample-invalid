@@ -1,0 +1,5 @@
+		   "Doesn't contain an opening parenthesis.",
+		   "Must not modify the content.",
+                     prog[1],
+                   dependencies : GIO_DEPS,
+                   install : true)

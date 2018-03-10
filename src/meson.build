@@ -1,5 +1,6 @@
 programs_depending_on_gio = [
         # executable name, sources
+        ['gcu-align-params-on-parenthesis', ['gcu-align-params-on-parenthesis.c']],
         ['gcu-case-converter', ['gcu-case-converter.c']],
         ['gcu-lineup-parameters', ['gcu-lineup-parameters.c']]
 ]
