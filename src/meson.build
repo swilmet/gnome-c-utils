@@ -15,17 +15,21 @@ programs_depending_on_tepl = [
 ]
 
 foreach prog : programs_depending_on_gio
-        executable(prog[0],
-                   prog[1],
-                   dependencies : GIO_DEPS,
-                   install : true)
+        executable(
+                prog[0],
+                prog[1],
+                dependencies : GIO_DEPS,
+                install : true
+        )
 endforeach
 
 if ALL_TEPL_DEPS_FOUND
         foreach prog : programs_depending_on_tepl
-                executable(prog[0],
-                           prog[1],
-                           dependencies : [GIO_DEPS, TEPL_DEPS],
-                           install : true)
+                executable(
+                        prog[0],
+                        prog[1],
+                        dependencies : [GIO_DEPS, TEPL_DEPS],
+                        install : true
+                )
         endforeach
 endif

@@ -3,8 +3,10 @@
 # - Global variables in UPPER_CASE.
 # See: https://github.com/mesonbuild/meson/issues/2607
 
-project('gnome-c-utils', 'c',
-        meson_version : '>= 0.43')
+project(
+        'gnome-c-utils', 'c',
+        meson_version : '>= 0.43'
+)
 
 GIO_DEPS = [
         dependency('glib-2.0', version : '>= 2.50'),
@@ -27,8 +29,10 @@ foreach tepl_dep : TEPL_DEPS
         endif
 endforeach
 
-add_global_arguments('-DG_LOG_DOMAIN="@0@"'.format(meson.project_name()),
-                     language : 'c')
+add_global_arguments(
+        '-DG_LOG_DOMAIN="@0@"'.format(meson.project_name()),
+        language : 'c'
+)
 
 #####
 # CFLAGS
