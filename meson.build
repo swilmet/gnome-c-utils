@@ -5,7 +5,8 @@
 
 project(
   'gnome-c-utils', 'c',
-  meson_version : '>= 0.43'
+  meson_version : '>= 0.43',
+  default_options : ['warning_level=3']
 )
 
 GIO_DEPS = [
