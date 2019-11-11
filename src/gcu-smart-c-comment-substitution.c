@@ -331,8 +331,7 @@ skip_leading_stars (GtkTextIter *iter)
 
 /* Returns the next word, and moves @iter at the end of the returned word. */
 static gchar *
-next_word (Sub         *sub,
-           GtkTextIter *iter)
+next_word (GtkTextIter *iter)
 {
   GtkTextIter word_start;
 
@@ -425,7 +424,7 @@ match_search_text (Sub               *sub,
       const gchar *word_to_match = l->data;
       gchar *word;
 
-      word = next_word (sub, &iter);
+      word = next_word (&iter);
       if (my_strcmp0 (word, word_to_match) != 0)
         {
           g_free (word);
