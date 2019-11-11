@@ -30,7 +30,7 @@ foreach tepl_dep : TEPL_DEPS
   endif
 endforeach
 
-add_global_arguments(
+add_project_arguments(
   '-DG_LOG_DOMAIN="@0@"'.format(meson.project_name()),
   language : 'c'
 )
