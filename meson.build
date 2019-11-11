@@ -35,6 +35,14 @@ add_global_arguments(
   language : 'c'
 )
 
+# Additional CFLAGS.
+warning_cflags = [
+  '-Wno-unused-parameter',
+]
+c_compiler = meson.get_compiler('c')
+supported_warning_cflags = c_compiler.get_supported_arguments(warning_cflags)
+add_project_arguments(supported_warning_cflags, language : 'c')
+
 subdir('src')
 
 # Print a summary of the configuration
