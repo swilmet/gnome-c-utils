@@ -171,8 +171,7 @@ get_stdin_contents (void)
 }
 
 int
-main (int    argc,
-      char **argv)
+main (void)
 {
   gchar *input_str;
 
