@@ -470,9 +470,6 @@ save_file (Sub *sub)
   tepl_file_saver_save_async (saver,
                               G_PRIORITY_HIGH,
                               NULL,
-                              NULL,
-                              NULL,
-                              NULL,
                               save_cb,
                               NULL);
 }
@@ -579,9 +576,6 @@ sub_launch (Sub *sub)
 
   tepl_file_loader_load_async (loader,
                                G_PRIORITY_HIGH,
-                               NULL,
-                               NULL,
-                               NULL,
                                NULL,
                                load_cb,
                                sub);

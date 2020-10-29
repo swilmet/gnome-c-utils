@@ -62,7 +62,6 @@ save_file (TeplBuffer *buffer)
   tepl_file_saver_save_async (saver,
                               G_PRIORITY_DEFAULT,
                               NULL,
-                              NULL, NULL, NULL,
                               save_file_cb,
                               NULL);
 }
@@ -203,7 +202,6 @@ load_file (TeplBuffer *buffer)
   tepl_file_loader_load_async (loader,
                                G_PRIORITY_DEFAULT,
                                NULL,
-                               NULL, NULL, NULL,
                                load_file_cb,
                                buffer);
 }
