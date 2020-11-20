@@ -1,3 +1,12 @@
+GNOME 40, March 2021
+--------------------
+* Port to Tepl 5.
+
+GNOME 3.38, September 2020
+--------------------------
+* New scripts and templates to handle the GObject boilerplate (create a new
+  class or interface, with different coding styles).
+
 GNOME 3.28, March 2018
 ----------------------
 * Build system: use Meson instead of the Autotools.
